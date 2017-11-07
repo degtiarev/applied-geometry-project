@@ -1,6 +1,7 @@
 #include "scenario.h"
 
 #include "testtorus.h"
+#include "mycurve.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -78,6 +79,12 @@ void Scenario::initializeScenario() {
   surface->insertVisualizer(surface_visualizer);
   surface->replot(200,200,1,1);
   scene()->insert(surface);
+
+  // My curve
+  auto mycurve = new GMlib::MyCurve<float>();
+  mycurve->toggleDefaultVisualizer();
+  mycurve->replot(200,0);
+  scene()->insert(mycurve);
 
   surface->test01();
 

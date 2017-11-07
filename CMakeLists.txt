@@ -110,6 +110,7 @@ set( HDRS
 
   testtorus.h
   scenario.h
+  mycurve.h
   )
 
 set( SRCS
