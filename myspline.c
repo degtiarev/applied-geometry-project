@@ -21,7 +21,7 @@
 **********************************************************************************/
 
 
-
+#include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\scene\src\visualizers\gmselectorgridvisualizer.h"
 
 
 namespace GMlib {
@@ -37,6 +37,15 @@ namespace GMlib {
     _d = d;
     _makeKnotVector(c.getDim());
     _C = c;
+
+    for (int i=0;i<_C.getDim();i++){
+            Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
+            this->insert(s);
+
+        }
+        auto sk = new SelectorGridVisualizer<T>;
+        sk->setSelectors(_C,0,isClosed());
+        this->insertVisualizer(sk);
   }
 
   template <typename T>
@@ -91,13 +100,13 @@ namespace GMlib {
 
   template <typename T>
   T MSpline<T>::getStartP() const {
-    return T(0);
+      return _t(_d);
   }
 
 
   template <typename T>
   T MSpline<T>::getEndP()const {
-      return T( M_2PI );
+      return  _t(_C.getDim());
   }
 
   template<typename T>
@@ -138,6 +147,7 @@ namespace GMlib {
         for(int i=n+1;i<=n+_d;i++){
             _t[i] = _t(i-1);
         }
+
   }
 
 

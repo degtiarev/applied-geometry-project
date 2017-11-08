@@ -28,6 +28,7 @@
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
+#include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\scene\src\selector\gmselector.h"
 
 
 namespace GMlib {

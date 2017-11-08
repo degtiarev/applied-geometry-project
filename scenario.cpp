@@ -98,10 +98,10 @@ void Scenario::initializeScenario() {
     c[6] = GMlib::Vector<float,3>(6,0.5,0);
     c[7] = GMlib::Vector<float,3>(7,0,0);
 
-  auto myspline = new GMlib::MSpline<float>(c, 3);
-  myspline->toggleDefaultVisualizer();
-  myspline->replot(200,0);
-  scene()->insert(myspline);
+  myPCurve = new GMlib::MSpline<float>(c, 2);
+  myPCurve->toggleDefaultVisualizer();
+  myPCurve->replot(200,0);
+  scene()->insert(myPCurve);
 
   //surface->test01();
 
@@ -109,4 +109,10 @@ void Scenario::initializeScenario() {
 
 void Scenario::cleanupScenario() {
 
+}
+
+void Scenario::callGL()
+{
+    if (myPCurve)
+        myPCurve->replot();
 }
