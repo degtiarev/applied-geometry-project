@@ -2,6 +2,7 @@
 
 #include "testtorus.h"
 #include "mycurve.h"
+#include "myspline.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -71,14 +72,14 @@ void Scenario::initializeScenario() {
 
 
   // Surface visualizers
-  auto surface_visualizer = new GMlib::PSurfNormalsVisualizer<float,3>;
+  // auto surface_visualizer = new GMlib::PSurfNormalsVisualizer<float,3>;
 
   // Surface
-  auto surface = new TestTorus;
-  surface->toggleDefaultVisualizer();
-  surface->insertVisualizer(surface_visualizer);
-  surface->replot(200,200,1,1);
-  scene()->insert(surface);
+//  auto surface = new TestTorus;
+//  surface->toggleDefaultVisualizer();
+//  surface->insertVisualizer(surface_visualizer);
+//  surface->replot(200,200,1,1);
+//  scene()->insert(surface);
 
   // My curve
   auto mycurve = new GMlib::MyCurve<float>();
@@ -86,7 +87,23 @@ void Scenario::initializeScenario() {
   mycurve->replot(200,0);
   scene()->insert(mycurve);
 
-  surface->test01();
+  // My spline
+  GMlib::DVector<GMlib::Vector<float,3>>c(8);
+    c[0] = GMlib::Vector<float,3>(0,0,0);
+    c[1] = GMlib::Vector<float,3>(1,1,0);
+    c[2] = GMlib::Vector<float,3>(2,2,0);
+    c[3] = GMlib::Vector<float,3>(3,3,0);
+    c[4] = GMlib::Vector<float,3>(4,3,0);
+    c[5] = GMlib::Vector<float,3>(5,1,0);
+    c[6] = GMlib::Vector<float,3>(6,0.5,0);
+    c[7] = GMlib::Vector<float,3>(7,0,0);
+
+  auto myspline = new GMlib::MSpline<float>(c, 3);
+  myspline->toggleDefaultVisualizer();
+  myspline->replot(200,0);
+  scene()->insert(myspline);
+
+  //surface->test01();
 
 }
 

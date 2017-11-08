@@ -33,36 +33,29 @@ namespace GMlib {
 
   template <typename T>
   inline
-  MyCurve<T>::MyCurve( T radius ) {
-    _r = radius;
+  MSpline<T>::MSpline(const DVector<Vector<T,3>> &c, int d) {
+    _d = d;
+    _makeKnotVector(c.getDim());
+    _C = c;
   }
-
 
   template <typename T>
   inline
-  MyCurve<T>::MyCurve( const MyCurve<T>& copy ) : PCurve<T,3>(copy) {}
+  MSpline<T>::MSpline(const DVector<Vector<T,3>> &c, int d, int n) {
+  }
+
+  template <typename T>
+  inline
+  MSpline<T>::MSpline( const MSpline<T>& copy ) : PCurve<T,3>(copy) {}
 
 
   template <typename T>
-  MyCurve<T>::~MyCurve() {}
+  MSpline<T>::~MSpline() {}
 
 
   //**************************************
   //        Public local functons       **
   //**************************************
-
-  template <typename T>
-  inline
-  T MyCurve<T>::getRadius() const {
-    return _r;
-  }
-
-
-  template <typename T>
-  inline
-  void MyCurve<T>::setRadius( T radius ) {
-      _r = radius;
-  }
 
 
   //***************************************************
@@ -70,8 +63,8 @@ namespace GMlib {
   //***************************************************
 
   template <typename T>
-  bool MyCurve<T>::isClosed() const {
-    return true;
+  bool MSpline<T>::isClosed() const {
+    return false;
   }
 
 
@@ -80,43 +73,71 @@ namespace GMlib {
   //******************************************************
 
   template <typename T>
-  void MyCurve<T>::eval( T t, int d, bool /*l*/ ) const {
+  void MSpline<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
+    int i = _findIndex(t);
+    const T b1 = (1-_W(i,1,t))*(1-_W(i-1,2,t));
+    const T b2 = ((1-_W(i,1,t))*_W(i-1,2,t))+(_W(i,1,t)*(1-_W(i,2,t)));
+    const T b3 = (_W(i,1,t)*_W(i,2,t));
 
-    const T ct = _r * cos(t);
-    const T st = _r * sin(t);
 
-    this->_p[0][0] = cos(t);
-    this->_p[0][1] = sin(t);
-    this->_p[0][2] = t;
+    this->_p[0] = _C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
 
-    if( this->_dm == GM_DERIVATION_EXPLICIT ) {
 
-      if( d > 0 ) {
-        this->_p[1][0] = -st;
-        this->_p[1][1] =  ct;
-        this->_p[1][2] =  T(0);
-      }
-      if( d > 1 ) this->_p[2] = -this->_p[0];
-      if( d > 2 ) this->_p[3] = -this->_p[1];
-      if( d > 3 ) this->_p[4] = this->_p[0];
-      if( d > 4 ) this->_p[5] = this->_p[1];
-      if( d > 5 ) this->_p[6] = this->_p[2];
-      if( d > 6 ) this->_p[7] = this->_p[3];
-    }
+
   }
 
 
   template <typename T>
-  T MyCurve<T>::getStartP() const {
+  T MSpline<T>::getStartP() const {
     return T(0);
   }
 
 
   template <typename T>
-  T MyCurve<T>::getEndP()const {
-    return T( M_2PI );
+  T MSpline<T>::getEndP()const {
+      return T( M_2PI );
+  }
+
+  template<typename T>
+  T MSpline<T>::_W(int i, int d, T t) const
+  {
+      return ((t - _t(i))/(_t(i+d)-_t(i)));
+
+  }
+
+  template<typename T>
+  int MSpline<T>::_findIndex(T t) const
+  {
+    int i=_d;
+    int n = _C.getDim();
+    for(;i<=n;i++){
+        if(t>=_t(i) && t<_t(i+1))
+            break;
+    }
+    if (i >= n){
+        i=n-1;
+    }
+    return i;
+  }
+
+  template<typename T>
+  void MSpline<T>::_makeKnotVector(int n)
+  {
+
+      //n = _C.getDim();
+      _t.setDim(n+_d+1);
+
+        for(int i = 0;i<=_d;i++){
+            _t[i] = 0;
+        }
+        for(int i=_d+1;i<= n;i++){
+            _t[i] = i-_d;
+        }
+        for(int i=n+1;i<=n+_d;i++){
+            _t[i] = _t(i-1);
+        }
   }
 
 
