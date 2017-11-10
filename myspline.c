@@ -50,7 +50,15 @@ namespace GMlib {
 
   template <typename T>
   inline
-  MSpline<T>::MSpline(const DVector<Vector<T,3>> &c, int d, int n) {
+  MSpline<T>::MSpline(const DVector<Vector<T,3>> &p, int d, int n) {
+
+      _d = d;
+      _makeKnotVector(n);
+      _createControlPoints(p,n);//surfaces
+
+      auto sk = new SelectorGridVisualizer<T>;
+      sk->setSelectors(_C,0,isClosed());
+      this->insertVisualizer(sk);
   }
 
   template <typename T>
@@ -86,15 +94,11 @@ namespace GMlib {
 
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
-    const T b1 = (1-_W(i,1,t))*(1-_W(i-1,2,t));
-    const T b2 = ((1-_W(i,1,t))*_W(i-1,2,t))+(_W(i,1,t)*(1-_W(i,2,t)));
-    const T b3 = (_W(i,1,t)*_W(i,2,t));
-
+    const T b1 = (1-_W(i,1,t))*(1-_W(i-1,2,t)); //A[i][j-2]
+    const T b2 = ((1-_W(i,1,t))*_W(i-1,2,t))+(_W(i,1,t)*(1-_W(i,2,t))); //A[i][j-1]
+    const T b3 = (_W(i,1,t)*_W(i,2,t)); //A[i][j]
 
     this->_p[0] = _C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
-
-
-
   }
 
 
@@ -134,7 +138,6 @@ namespace GMlib {
   template<typename T>
   void MSpline<T>::_makeKnotVector(int n)
   {
-
       //n = _C.getDim();
       _t.setDim(n+_d+1);
 
@@ -147,6 +150,43 @@ namespace GMlib {
         for(int i=n+1;i<=n+_d;i++){
             _t[i] = _t(i-1);
         }
+
+  }
+
+  template<typename T>
+  void MSpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
+  {
+      int m = p.getDim();
+      _C.setDim(n);
+      DMatrix<T> A(m,n);
+      for (int i = 0; i<m; i++){
+          for (int j = 0; j<n;j++){
+              A[i][j] = T(0);
+          }
+      }
+
+      for (int i = 0;i<m;i++){
+          T t = _t[0]+i*(getEndP()-getStartP())/(m-1);
+
+          int j = _findIndex(t);
+          const T b1 = (1-_W(j,1,t))*(1-_W(j-1,2,t));
+          const T b2 = ((1-_W(j,1,t))*_W(j-1,2,t))+(_W(j,1,t)*(1-_W(j,2,t)));
+          const T b3 = (_W(j,1,t)*_W(j,2,t));
+
+          A[i][j-2] = b1;
+          A[i][j-1] = b2;
+          A[i][j] = b3;
+      }
+      DMatrix<T> Atrans = A;
+      Atrans.transpose();
+      DMatrix<T> B = Atrans*A;
+      B.invert();
+      DVector<Vector<T,3>> x = Atrans*p;
+      _C = B*x;
+      for(int i=0;i<_C.getDim();i++){
+          Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
+          this->insert(s);
+      }
 
   }
 

@@ -39,7 +39,7 @@ namespace GMlib {
     GM_SCENEOBJECT(MSpline)
   public:
     MSpline( const DVector<Vector<T,3>> &c, int d);
-    MSpline( const DVector<Vector<T,3>> &c, int d, int n);
+    MSpline( const DVector<Vector<T,3>> &p, int d, int n);
     MSpline( const MSpline<T>& copy );
     virtual ~MSpline();
 
@@ -71,6 +71,7 @@ namespace GMlib {
     T                   _W(int i, int d, T t) const;
     int                 _findIndex(T t) const;
     void                _makeKnotVector(int n);
+    void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
 
 
   }; // END class MSpline

@@ -98,7 +98,7 @@ void Scenario::initializeScenario() {
     c[6] = GMlib::Vector<float,3>(6,0.5,0);
     c[7] = GMlib::Vector<float,3>(7,0,0);
 
-  myPCurve = new GMlib::MSpline<float>(c, 2);
+  myPCurve = new GMlib::MSpline<float>(c, 2, 8);
   myPCurve->toggleDefaultVisualizer();
   myPCurve->replot(200,0);
   scene()->insert(myPCurve);
