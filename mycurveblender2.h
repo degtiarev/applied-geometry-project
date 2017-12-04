@@ -37,30 +37,25 @@ template <typename T>
 class MyCurveBlender2 : public PCurve<T,3> {
     GM_SCENEOBJECT(MyCurveBlender2)
     public:
-        MyCurveBlender2( T radius = T(20) );
-    MyCurveBlender2( const MyCurveBlender2<T>& copy );
+        MyCurveBlender2(  PCurve<T,3> *c1,  PCurve<T,3> *c2, T x);
     virtual ~MyCurveBlender2();
-
-    // Public local functions
-    T               getRadius() const;
-    void            setRadius( T radius = T(20) );
-
-    //****************************************
-    //****** Virtual public functions   ******
-    //****************************************
-
-    // from PCurve
     bool                isClosed() const override;
 
 protected:
-    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
+    T                    _x;
+    PCurve<T,3> *        _C1;
+    PCurve<T,3> *        _C2;
 
+private:
+    T                   _W(int i, int d, T t) const;
+    T                   _B(T t) const;
+    int                 _findIndex(T t) const;
+    void                _makeKnotVector(int n);
+    void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
 
-    // Protected data for the curve
-    T               _r;
 
 }; // END class PCircle
 
@@ -70,4 +65,4 @@ protected:
 #include "mycurveblender2.c"
 
 
-#endif // GM_MYCURVBLENDERTWO_H
+#endif // GM_MYCURVBLENDER2_H

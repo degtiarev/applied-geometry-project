@@ -31,16 +31,13 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
-template <typename T>
-inline
-MyCurveBlender2<T>::MyCurveBlender2( T radius ) {
-    _r = radius;
+template<typename T>
+MyCurveBlender2<T>::MyCurveBlender2( PCurve<T,3> *c1,  PCurve<T,3> *c2, T x)
+{
+     _x = x;
+     _C1 = c1;
+     _C2 = c2;
 }
-
-
-template <typename T>
-inline
-MyCurveBlender2<T>::MyCurveBlender2( const MyCurveBlender2<T>& copy ) : PCurve<T,3>(copy) {}
 
 
 template <typename T>
@@ -51,18 +48,6 @@ MyCurveBlender2<T>::~MyCurveBlender2() {}
 //        Public local functons       **
 //**************************************
 
-template <typename T>
-inline
-T MyCurveBlender2<T>::getRadius() const {
-    return _r;
-}
-
-
-template <typename T>
-inline
-void MyCurveBlender2<T>::setRadius( T radius ) {
-    _r = radius;
-}
 
 
 //***************************************************
@@ -71,7 +56,7 @@ void MyCurveBlender2<T>::setRadius( T radius ) {
 
 template <typename T>
 bool MyCurveBlender2<T>::isClosed() const {
-    return true;
+    return false;
 }
 
 
@@ -83,40 +68,38 @@ template <typename T>
 void MyCurveBlender2<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
-
-    const T ct = _r * cos(t);
-    const T st = _r * sin(t);
-
-    this->_p[0][0] = cos(t);
-    this->_p[0][1] = sin(t);
-    this->_p[0][2] = t;
-
-    if( this->_dm == GM_DERIVATION_EXPLICIT ) {
-
-        if( d > 0 ) {
-            this->_p[1][0] = -st;
-            this->_p[1][1] =  ct;
-            this->_p[1][2] =  T(0);
-        }
-        if( d > 1 ) this->_p[2] = -this->_p[0];
-        if( d > 2 ) this->_p[3] = -this->_p[1];
-        if( d > 3 ) this->_p[4] = this->_p[0];
-        if( d > 4 ) this->_p[5] = this->_p[1];
-        if( d > 5 ) this->_p[6] = this->_p[2];
-        if( d > 6 ) this->_p[7] = this->_p[3];
+    if (t < _C1->getParEnd() - _x*_C1->getParDelta()){
+        this->_p = _C1->evaluateParent(t,0);
     }
+    else if (t < _C1->getParEnd()){
+        T _t1 = (t-_C1->getParEnd()+_x*_C1->getParDelta())/(_x*_C1->getParDelta());
+
+        const T b1 = 1-_B(_t1);
+        const T b2 = _B(_t1);
+
+        this->_p = b1*_C1->evaluateParent(t,0) + b2*_C2->evaluateParent(_C2->getParStart()+_t1*_x*_C2->getParDelta(),0);//_C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
+    }
+    else
+
+      this->_p = _C2->evaluateParent(_C2->getParStart()+t-_C1->getParEnd()+_x*_C2->getParDelta(),0);
 }
 
 
 template <typename T>
 T MyCurveBlender2<T>::getStartP() const {
-    return T(0);
+   return _C1->getParStart();
 }
 
 
 template <typename T>
 T MyCurveBlender2<T>::getEndP()const {
-    return T( M_2PI );
+       return _C1->getParEnd()+(1-_x)*_C2->getParDelta();
+}
+
+template<typename T>
+T MyCurveBlender2<T>::_B(T t) const
+{
+  return 3*(t*t) - 2*(t*t*t);
 }
 
 

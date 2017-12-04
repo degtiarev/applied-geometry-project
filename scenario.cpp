@@ -105,10 +105,22 @@ void Scenario::initializeScenario() {
   scene()->insert(myPCurve);
 
   // My blender 2
-  auto mycurve2 = new GMlib::MyCurveBlender2<float>();
-  mycurve2->toggleDefaultVisualizer();
-  mycurve2->replot(200,0);
-  scene()->insert(mycurve2);
+  GMlib::MyCurve<float>* myCurve1 = new GMlib::MyCurve<float>();
+  GMlib::MyCurve<float>* myCurve2 = new GMlib::MyCurve<float>();
+  myCurve2->translate(GMlib::Vector<float,3>(0,3,0));
+  myCurve1->toggleDefaultVisualizer();
+  myCurve1->replot(200,0);
+  scene()->insert(myCurve1);
+
+  myCurve2->toggleDefaultVisualizer();
+  myCurve2->replot(200,0);
+  scene()->insert(myCurve2);
+
+  auto myMultiCurve = new GMlib::MyCurveBlender2<float>(myCurve1, myCurve2,0.3);
+  myMultiCurve->toggleDefaultVisualizer();
+  myMultiCurve->setColor(GMlib::GMcolor::blue());
+  myMultiCurve->replot(200,0);
+  scene()->insert(myMultiCurve);
 
   //surface->test01();
 
