@@ -3,6 +3,7 @@
 #include "testtorus.h"
 #include "mycurve.h"
 #include "myspline.h"
+#include "mycurveblender2.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -102,6 +103,12 @@ void Scenario::initializeScenario() {
   myPCurve->toggleDefaultVisualizer();
   myPCurve->replot(200,0);
   scene()->insert(myPCurve);
+
+  // My blender 2
+  auto mycurve2 = new GMlib::MyCurveBlender2<float>();
+  mycurve2->toggleDefaultVisualizer();
+  mycurve2->replot(200,0);
+  scene()->insert(mycurve2);
 
   //surface->test01();
 
