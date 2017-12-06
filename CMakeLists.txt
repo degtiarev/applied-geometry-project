@@ -113,6 +113,7 @@ set( HDRS
   mycurve.h
   myspline.h
   mycurveblender2.h
+  myGERBScurve.h
   )
 
 set( SRCS

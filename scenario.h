@@ -26,6 +26,7 @@ public:
 
 private:
   GMlib::PCurve<float,3>* myPCurve{nullptr};
+   GMlib::PCurve<float,3>* mybcurve{nullptr};
 
 public slots:
   void callGL ();

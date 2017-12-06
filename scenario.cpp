@@ -4,6 +4,7 @@
 #include "mycurve.h"
 #include "myspline.h"
 #include "mycurveblender2.h"
+#include "myGERBScurve.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -122,6 +123,13 @@ void Scenario::initializeScenario() {
   myMultiCurve->replot(200,0);
   scene()->insert(myMultiCurve);
 
+  // my GERBS curve
+  mybcurve = new GMlib::MyGERBScurve<float>(myCurve1,8);
+  mybcurve->toggleDefaultVisualizer();
+  mybcurve->translate(GMlib::Vector<float,3>(3,0,0));
+  mybcurve->replot(200,0);
+  scene()->insert(mybcurve);
+
   //surface->test01();
 
 }
@@ -134,4 +142,8 @@ void Scenario::callGL()
 {
     if (myPCurve)
         myPCurve->replot();
+
+    if (mybcurve){
+        mybcurve->replot(100,0);
+    }
 }
