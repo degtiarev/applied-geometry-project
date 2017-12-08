@@ -23,28 +23,27 @@
 
 
 
-#ifndef GM_MyGERBScurve4_H
-#define GM_MyGERBScurve4_H
+#ifndef GM_MyClosedCurve_H
+#define GM_MyClosedCurve_H
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
-#include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\scene\src\selector\gmselector.h"
+
 
 namespace GMlib {
 
 
 template <typename T>
-class MyGERBScurve4 : public PCurve<T,3> {
-    GM_SCENEOBJECT(MyGERBScurve4)
+class MyClosedCurve : public PCurve<T,3> {
+    GM_SCENEOBJECT(MyClosedCurve)
     public:
-        MyGERBScurve4(  PCurve<T,3> *c, int n);
-    //MyGERBScurve4( const DVector<Vector<T,3>> &c, int d, int n);
-    MyGERBScurve4( const MyGERBScurve4<T>& copy );
-    virtual ~MyGERBScurve4();
+        MyClosedCurve( T radius = T(40) );
+    MyClosedCurve( const MyClosedCurve<T>& copy );
+    virtual ~MyClosedCurve();
 
     // Public local functions
-
-
+    T               getRadius() const;
+    void            setRadius( T radius = T(20) );
 
     //****************************************
     //****** Virtual public functions   ******
@@ -58,33 +57,17 @@ protected:
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
-    void                localSimulate(double dt) override;
 
 
     // Protected data for the curve
+    T               _r;
 
-    DVector<PCurve<T,3>*>_C; //local curves
-    DVector<T>           _t; //knot vector
-    int                  _d; //degree
-    T                    _s;
-    T                    _e;
-    bool                 _isclosed;
-
-private:
-
-    T                   _W(int i, int d, T t) const;
-    T                   _B(T t) const;
-    int                 _findIndex(T t) const;
-    void                _makeKnotVector(int n);
-    void                _createLocalCurves(PCurve<T,3> *c,int n);
-
-
-}; // END class MyGERBScurve4
+}; // END class MyClosedCurve
 
 } // END namepace GMlib
 
-// Include MyGERBScurve4 class function implementations
-#include "myGERBScurve4.c"
+// Include MyClosedCurve class function implementations
+#include "MyClosedCurve.c"
 
 
-#endif // GM_MyGERBScurve4_H
+#endif // GM_PARAMETRICS_CURVES_MyClosedCurve_H

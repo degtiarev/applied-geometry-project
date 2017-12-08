@@ -35,16 +35,16 @@ GMlib::MyGERBScurve4<T>::MyGERBScurve4(PCurve<T,3> *c, int n)
     _s  = c->getParStart();
     _e = c->getParEnd();
 
-    _makeKnotVector(n);
-    _C.setDim(n);
-    for(int i=0;i<n;i++){
-        auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);
-        cu->toggleDefaultVisualizer();
-        cu->replot(21,0);
-        cu->setCollapsed(true);
-        _C[i] = cu;
-        this->insert(cu);
+    if (c->isClosed()){
+        _isclosed = true;
+        n++;
     }
+    else {
+        _isclosed = false;
+    }
+
+    _makeKnotVector(n);
+    _createLocalCurves(c,n);
 }
 
 template <typename T>
@@ -67,7 +67,7 @@ MyGERBScurve4<T>::~MyGERBScurve4() {}
 
 template <typename T>
 bool MyGERBScurve4<T>::isClosed() const {
-    return false;
+    return _isclosed;
 }
 
 
@@ -137,22 +137,45 @@ void MyGERBScurve4<T>::_makeKnotVector(int n)
     _t[0] = _t[1] = _s;
 
     for(int i = 0;i<n;i++){
-        _t[i+2] = _s+i*local_d;
+        _t[i+2] = _s+(i+1)*local_d;
     }
 
     _t[n] = _t[n+1] = _e;
 
+    std::cout << "_t = " << _t << std::endl;
+
+    if (_isclosed){
+
+        _t[0] = _t[1] - (_t[n] - _t[n-1]);
+        _t[n+1] = _t[n] + (_t[2] - _t[1]);
+    }
+    std::cout << "closed _t = " << _t << std::endl;
+    //if closed t[0] = t[1] - (t[n] - t[n-1]), t[n+1] = t[n] + (t[2] - t[1])
+
 }
 
 template<typename T>
-void MyGERBScurve4<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
-{
-    int m = p.getDim();
-    DMatrix<Vector<T,3>> A(m,n);
-    for (int i = 0; i<m; i++){
-        for (int j = 0; j<n;j++){
-            A[i][j] = T(0);
-        }
+void MyGERBScurve4<T>::_createLocalCurves(PCurve<T,3> *c, int n){
+
+    _C.setDim(n);
+    for(int i=0;i<n-1;i++){
+        auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);
+        cu->toggleDefaultVisualizer();
+        cu->replot(21,0);
+        cu->setCollapsed(true);
+        _C[i] = cu;
+        this->insert(cu);
+    }
+    if (_isclosed){
+        _C[n-1] = _C[0];
+    }
+    else {
+        auto cu = new PSubCurve<T>(c,_t[n-1],_t[n+1],_t[n]);
+        cu->toggleDefaultVisualizer();
+        cu->replot(21,0);
+        cu->setCollapsed(true);
+        _C[n-1] = cu;
+        this->insert(cu);
     }
 
 }

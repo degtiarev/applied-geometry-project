@@ -6,6 +6,7 @@
 #include "mycurveblender2.h"
 #include "myGERBScurve4.h"
 #include "myGERBScurve6.h"
+#include "myclosedcurve.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -143,6 +144,13 @@ void Scenario::initializeScenario() {
   mybsurfe->replot(50,50,1,1);
   scene()->insert(mybsurfe);
 
+  // my closed curve
+  auto myClosedCurve = new GMlib::MyClosedCurve<float>();
+  mybcurve = new GMlib::MyGERBScurve4<float>(myClosedCurve,20);
+  mybcurve->toggleDefaultVisualizer();
+  mybcurve->translate(GMlib::Vector<float,3>(3,0,0));
+  mybcurve->replot(200,0);
+  scene()->insert(mybcurve);
 
   //surface->test01();
 
