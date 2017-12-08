@@ -29,7 +29,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 template<typename T>
-GMlib::MyGERBScurve<T>::MyGERBScurve(PCurve<T,3> *c, int n)
+GMlib::MyGERBScurve4<T>::MyGERBScurve4(PCurve<T,3> *c, int n)
 {
     _d = 1;
     _s  = c->getParStart();
@@ -49,11 +49,11 @@ GMlib::MyGERBScurve<T>::MyGERBScurve(PCurve<T,3> *c, int n)
 
 template <typename T>
 inline
-MyGERBScurve<T>::MyGERBScurve( const MyGERBScurve<T>& copy ) : PCurve<T,3>(copy) {}
+MyGERBScurve4<T>::MyGERBScurve4( const MyGERBScurve4<T>& copy ) : PCurve<T,3>(copy) {}
 
 
 template <typename T>
-MyGERBScurve<T>::~MyGERBScurve() {}
+MyGERBScurve4<T>::~MyGERBScurve4() {}
 
 
 //**************************************
@@ -66,7 +66,7 @@ MyGERBScurve<T>::~MyGERBScurve() {}
 //***************************************************
 
 template <typename T>
-bool MyGERBScurve<T>::isClosed() const {
+bool MyGERBScurve4<T>::isClosed() const {
     return false;
 }
 
@@ -76,7 +76,7 @@ bool MyGERBScurve<T>::isClosed() const {
 //******************************************************
 
 template <typename T>
-void MyGERBScurve<T>::eval( T t, int d, bool /*l*/ ) const {
+void MyGERBScurve4<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
@@ -95,25 +95,25 @@ void MyGERBScurve<T>::eval( T t, int d, bool /*l*/ ) const {
 
 
 template <typename T>
-T MyGERBScurve<T>::getStartP() const {
+T MyGERBScurve4<T>::getStartP() const {
     return _t(_d);
 }
 
 
 template <typename T>
-T MyGERBScurve<T>::getEndP()const {
+T MyGERBScurve4<T>::getEndP()const {
     return _t(_C.getDim());
 }
 
 template<typename T>
-T MyGERBScurve<T>::_W(int i, int d, T t) const
+T MyGERBScurve4<T>::_W(int i, int d, T t) const
 {
     return ((t - _t(i))/(_t(i+d)-_t(i)));
 
 }
 
 template<typename T>
-int MyGERBScurve<T>::_findIndex(T t) const
+int MyGERBScurve4<T>::_findIndex(T t) const
 {
     int i=_d;
     int n = _C.getDim();
@@ -128,7 +128,7 @@ int MyGERBScurve<T>::_findIndex(T t) const
 }
 
 template<typename T>
-void MyGERBScurve<T>::_makeKnotVector(int n)
+void MyGERBScurve4<T>::_makeKnotVector(int n)
 {
 
     auto local_d = (_e-_s)/(n-1);
@@ -145,7 +145,7 @@ void MyGERBScurve<T>::_makeKnotVector(int n)
 }
 
 template<typename T>
-void MyGERBScurve<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
+void MyGERBScurve4<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
 {
     int m = p.getDim();
     DMatrix<Vector<T,3>> A(m,n);
@@ -158,13 +158,13 @@ void MyGERBScurve<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int 
 }
 
 template<typename T>
-T MyGERBScurve<T>::_B(T t) const
+T MyGERBScurve4<T>::_B(T t) const
 {
     return 3*(t*t) - 2*(t*t*t);
 }
 
 template<typename T>
-void GMlib::MyGERBScurve<T>::localSimulate(double dt)
+void GMlib::MyGERBScurve4<T>::localSimulate(double dt)
 {
     for (int i = 0;i<_C.getDim();i++){
         _C[i]->rotate(dt,GMlib::Vector<float,3>(1,0,0));

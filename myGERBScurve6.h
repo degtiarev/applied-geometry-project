@@ -23,8 +23,8 @@
 
 
 
-#ifndef GM_MYGERBSCURVE_H
-#define GM_MYGERBSCURVE_H
+#ifndef GM_MyGERBScurve6_H
+#define GM_MyGERBScurve6_H
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
@@ -34,13 +34,12 @@ namespace GMlib {
 
 
 template <typename T>
-class MyGERBScurve : public PCurve<T,3> {
-    GM_SCENEOBJECT(MyGERBScurve)
+class MyGERBScurve6 : public GMlib::PSurf<T,3> {
+    GM_SCENEOBJECT(MyGERBScurve6)
     public:
-        MyGERBScurve(  PCurve<T,3> *c, int n);
-    //MyGERBScurve( const DVector<Vector<T,3>> &c, int d, int n);
-    MyGERBScurve( const MyGERBScurve<T>& copy );
-    virtual ~MyGERBScurve();
+        MyGERBScurve6(  PSurf<T,3> *s, int n1, int n2);
+    MyGERBScurve6( const MyGERBScurve6<T>& copy );
+    virtual ~MyGERBScurve6();
 
     // Public local functions
 
@@ -51,39 +50,49 @@ class MyGERBScurve : public PCurve<T,3> {
     //****************************************
 
     // from PCurve
-    bool                isClosed() const override;
+    bool                isClosedU() const override;
+    bool                isClosedV() const override;
 
 protected:
     // Virtual function from PCurve that has to be implemented locally
-    void                eval(T t, int d, bool l) const override;
-    T                   getStartP() const override;
-    T                   getEndP()   const override;
-    void                localSimulate(double dt) override;
+    void                eval( T u, T v, int d1, int d2, bool lu = true, bool lv = true ) const override;
+
+    T                   getStartPV() const override;
+    T                   getEndPV()   const override;
+
+    T                   getStartPU() const override;
+    T                   getEndPU()   const override;
+
+    //void                localSimulate(double dt) override;
 
 
     // Protected data for the curve
 
-    DVector<PCurve<T,3>*>_C; //local curves
-    DVector<T>           _t; //knot vector
+    DMatrix<PSurf<T,3>*> _S; //local curves
+    DVector<T>           _u; //knot vector
+    DVector<T>           _v; //knot vector
     int                  _d; //degree
-    T                    _s;
-    T                    _e;
+    T                    _su;
+    T                    _eu;
+    T                    _sv;
+    T                    _ev;
 
 private:
 
-    T                   _W(int i, int d, T t) const;
+    T                   _W(int i, int d, T t,const DVector<T>& knot) const;
     T                   _B(T t) const;
-    int                 _findIndex(T t) const;
-    void                _makeKnotVector(int n);
-    void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
+    T                   _BDeriv(T t) const;
+    int                 _findIndex(T t,const DVector<T>& knot) const;
+    void                _makeKnotVectors(DVector<T>& t,int n,T start,T end);
+    void                _createLocalSurfaces(PSurf<T, 3>* s,int n1,int n2);
 
 
-}; // END class MyGERBScurve
+}; // END class MyGERBScurve6
 
 } // END namepace GMlib
 
-// Include MyGERBScurve class function implementations
-#include "myGERBScurve.c"
+// Include MyGERBScurve6 class function implementations
+#include "myGERBScurve6.c"
 
 
-#endif // GM_MYGERBSCURVE_H
+#endif // GM_MyGERBScurve6_H
