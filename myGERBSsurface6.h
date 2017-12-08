@@ -23,8 +23,8 @@
 
 
 
-#ifndef GM_MyGERBScurve6_H
-#define GM_MyGERBScurve6_H
+#ifndef GM_MyGERBSsurface6_H
+#define GM_MyGERBSsurface6_H
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
@@ -34,12 +34,12 @@ namespace GMlib {
 
 
 template <typename T>
-class MyGERBScurve6 : public GMlib::PSurf<T,3> {
-    GM_SCENEOBJECT(MyGERBScurve6)
+class MyGERBSsurface6 : public GMlib::PSurf<T,3> {
+    GM_SCENEOBJECT(MyGERBSsurface6)
     public:
-        MyGERBScurve6(  PSurf<T,3> *s, int n1, int n2);
-    MyGERBScurve6( const MyGERBScurve6<T>& copy );
-    virtual ~MyGERBScurve6();
+        MyGERBSsurface6(  PSurf<T,3> *s, int n1, int n2);
+    MyGERBSsurface6( const MyGERBSsurface6<T>& copy );
+    virtual ~MyGERBSsurface6();
 
     // Public local functions
 
@@ -87,12 +87,12 @@ private:
     void                _createLocalSurfaces(PSurf<T, 3>* s,int n1,int n2);
 
 
-}; // END class MyGERBScurve6
+}; // END class MyGERBSsurface6
 
 } // END namepace GMlib
 
-// Include MyGERBScurve6 class function implementations
-#include "myGERBScurve6.c"
+// Include MyGERBSsurface6 class function implementations
+#include "MyGERBSsurface6.c"
 
 
-#endif // GM_MyGERBScurve6_H
+#endif // GM_MyGERBSsurface6_H

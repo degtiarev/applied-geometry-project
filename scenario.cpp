@@ -5,7 +5,7 @@
 #include "myspline.h"
 #include "mycurveblender2.h"
 #include "myGERBScurve4.h"
-#include "myGERBScurve6.h"
+#include "MyGERBSsurface6.h"
 #include "myclosedcurve.h"
 
 //// hidmanager
@@ -138,7 +138,7 @@ void Scenario::initializeScenario() {
                              GMlib::Vector<float,3>(0.0f, 0.0f, -20.0f));
   auto normalVis = new GMlib::PSurfNormalsVisualizer<float,3>();
 
-  mybsurfe = new GMlib::MyGERBScurve6<float>(myMSurface,4,4);
+  mybsurfe = new GMlib::MyGERBSsurface6<float>(myMSurface,4,4);
   mybsurfe->toggleDefaultVisualizer();
   mybsurfe->insertVisualizer(normalVis);
   mybsurfe->replot(50,50,1,1);

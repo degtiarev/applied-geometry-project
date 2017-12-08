@@ -31,7 +31,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 template<typename T>
-GMlib::MyGERBScurve6<T>::MyGERBScurve6(PSurf<T,3> *s, int n1, int n2)
+GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
 {
     _d = 1;
     _su = s->getParStartU();
@@ -49,11 +49,11 @@ GMlib::MyGERBScurve6<T>::MyGERBScurve6(PSurf<T,3> *s, int n1, int n2)
 
 template <typename T>
 inline
-MyGERBScurve6<T>::MyGERBScurve6( const MyGERBScurve6<T>& copy ) : PSurf<T,3>(copy) {}
+MyGERBSsurface6<T>::MyGERBSsurface6( const MyGERBSsurface6<T>& copy ) : PSurf<T,3>(copy) {}
 
 
 template <typename T>
-MyGERBScurve6<T>::~MyGERBScurve6() {}
+MyGERBSsurface6<T>::~MyGERBSsurface6() {}
 
 
 //**************************************
@@ -71,7 +71,7 @@ MyGERBScurve6<T>::~MyGERBScurve6() {}
 //******************************************************
 
 template <typename T>
-void MyGERBScurve6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) const {
+void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) const {
 
 
     this->_p.setDim( d1 + 1,d2+1);
@@ -126,37 +126,37 @@ void MyGERBScurve6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) const 
 
 
 template <typename T>
-T MyGERBScurve6<T>::getStartPU() const {
+T MyGERBSsurface6<T>::getStartPU() const {
     return _u(_d);
 }
 
 
 template <typename T>
-T MyGERBScurve6<T>::getEndPU()const {
+T MyGERBSsurface6<T>::getEndPU()const {
     return _u(_S.getDim1());
 }
 
 template <typename T>
-T MyGERBScurve6<T>::getStartPV() const {
+T MyGERBSsurface6<T>::getStartPV() const {
     return _v(_d);
 }
 
 
 template <typename T>
-T MyGERBScurve6<T>::getEndPV()const {
+T MyGERBSsurface6<T>::getEndPV()const {
     return _v(_S.getDim2());
 }
 
 
 template<typename T>
-T MyGERBScurve6<T>::_W(int i, int d, T t,const DVector<T>& knot) const
+T MyGERBSsurface6<T>::_W(int i, int d, T t,const DVector<T>& knot) const
 {
     return ((t - knot(i))/(knot(i+d)-knot(i)));
 
 }
 
 template<typename T>
-int MyGERBScurve6<T>::_findIndex(T t,const DVector<T>& knot) const
+int MyGERBSsurface6<T>::_findIndex(T t,const DVector<T>& knot) const
 {
     int i=_d;
     int n = knot.getDim()-2;
@@ -171,7 +171,7 @@ int MyGERBScurve6<T>::_findIndex(T t,const DVector<T>& knot) const
 }
 
 template<typename T>
-void MyGERBScurve6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end)
+void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end)
 {
 
     auto local_d = (end-start)/(n-1);
@@ -191,7 +191,7 @@ void MyGERBScurve6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end)
 }
 
 template<typename T>
-void MyGERBScurve6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
+void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
 {
 
 
@@ -211,28 +211,28 @@ void MyGERBScurve6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
 }
 
 template<typename T>
-T MyGERBScurve6<T>::_B(T t) const
+T MyGERBSsurface6<T>::_B(T t) const
 {
     return 3*(t*t) - 2*(t*t*t);
 }
 
 
 template<typename T>
-bool MyGERBScurve6<T>::isClosedU() const
+bool MyGERBSsurface6<T>::isClosedU() const
 {
     return false;
 
 }
 
 template<typename T>
-bool MyGERBScurve6<T>::isClosedV() const
+bool MyGERBSsurface6<T>::isClosedV() const
 {
     return false;
 
 }
 
 template<typename T>
-T MyGERBScurve6<T>::_BDeriv(T t) const
+T MyGERBSsurface6<T>::_BDeriv(T t) const
 {
     return 6*(t) - 6*(t*t);
 }
