@@ -76,14 +76,15 @@ protected:
     T                    _eu;
     T                    _sv;
     T                    _ev;
-
+    bool                 _isclosedU;
+    bool                 _isclosedV;
 private:
 
     T                   _W(int i, int d, T t,const DVector<T>& knot) const;
     T                   _B(T t) const;
     T                   _BDeriv(T t) const;
     int                 _findIndex(T t,const DVector<T>& knot) const;
-    void                _makeKnotVectors(DVector<T>& t,int n,T start,T end);
+    void                _makeKnotVectors(DVector<T>& t,int n,T start,T end,bool isclosed);
     void                _createLocalSurfaces(PSurf<T, 3>* s,int n1,int n2);
 
 

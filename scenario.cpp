@@ -136,11 +136,11 @@ void Scenario::initializeScenario() {
   auto myMSurface = new GMlib::PPlane<float>(GMlib::Point<float,3>(-10.0f, 10.0f, 20.0f),
                              GMlib::Vector<float,3>(0.0f, -20.0f, 0.0f),
                              GMlib::Vector<float,3>(0.0f, 0.0f, -20.0f));
-  auto normalVis = new GMlib::PSurfNormalsVisualizer<float,3>();
+  auto normalVis1 = new GMlib::PSurfNormalsVisualizer<float,3>();
 
   mybsurfe = new GMlib::MyGERBSsurface6<float>(myMSurface,4,4);
   mybsurfe->toggleDefaultVisualizer();
-  mybsurfe->insertVisualizer(normalVis);
+  mybsurfe->insertVisualizer(normalVis1);
   mybsurfe->replot(50,50,1,1);
   scene()->insert(mybsurfe);
 
@@ -151,6 +151,27 @@ void Scenario::initializeScenario() {
   mybcurve->translate(GMlib::Vector<float,3>(3,0,0));
   mybcurve->replot(200,0);
   scene()->insert(mybcurve);
+
+  // torus
+  auto myClosedTorus = new GMlib::PTorus<float>(1.5f,0.5f,0.5f);
+  auto normalVis2 = new GMlib::PSurfNormalsVisualizer<float,3>();
+
+  mybsurfe = new GMlib::MyGERBSsurface6<float>(myClosedTorus,4,4);
+  mybsurfe->toggleDefaultVisualizer();
+  mybsurfe->insertVisualizer(normalVis2);
+  mybsurfe->replot(50,50,1,1);
+  scene()->insert(mybsurfe);
+
+  //cylinder
+  auto cylinder=new GMlib::PCylinder<float>(2,2,15);
+  auto normalVis3 = new GMlib::PSurfNormalsVisualizer<float,3>();
+
+  mybsurfe = new GMlib::MyGERBSsurface6<float>(cylinder,4,4);
+  mybsurfe->toggleDefaultVisualizer();
+  mybsurfe->insertVisualizer(normalVis3);
+  mybsurfe->replot(50,50,1,1);
+  scene()->insert(mybsurfe);
+
 
   //surface->test01();
 

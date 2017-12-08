@@ -39,8 +39,24 @@ GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
     _sv = s->getParStartV();
     _ev = s->getParEndV();
 
-    _makeKnotVectors(_u,n1,_su,_eu);
-    _makeKnotVectors(_v,n2,_sv,_ev);
+    if (s->isClosedU()){
+        _isclosedU = true;
+        n1++;
+    }
+    else {
+        _isclosedU = false;
+    }
+
+    if (s->isClosedV()){
+        _isclosedV = true;
+        n2++;
+    }
+    else {
+        _isclosedV = false;
+    }
+
+    _makeKnotVectors(_u,n1,_su,_eu,_isclosedU);
+    _makeKnotVectors(_v,n2,_sv,_ev,_isclosedV);
 
     _S.setDim(n1,n2);
     _createLocalSurfaces(s,n1,n2);
@@ -116,9 +132,9 @@ void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) cons
 
     this->_p[0][0] = h1*Bv[0][0] + h2*Bv[1][0];
 
-    this->_p[0][1] = h3*Bv[0][0] + h4*Bv[1][0] + h5*Bv[0][0] + h6*Bv[1][0];
+    this->_p[1][0] = h3*Bv[0][0] + h4*Bv[1][0] + h5*Bv[0][0] + h6*Bv[1][0];
 
-    this->_p[1][0] = h1*Bv[0][1] + h2*Bv[1][1] + h7*Bv[0][0] + h8*Bv[1][0];
+    this->_p[0][1] = h1*Bv[0][1] + h2*Bv[1][1] + h7*Bv[0][0] + h8*Bv[1][0];
 
 
 
@@ -171,7 +187,7 @@ int MyGERBSsurface6<T>::_findIndex(T t,const DVector<T>& knot) const
 }
 
 template<typename T>
-void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end)
+void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end, bool isclosed)
 {
 
     auto local_d = (end-start)/(n-1);
@@ -185,25 +201,49 @@ void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end)
     }
 
     t[n] = t[n+1] = end;
-    //    std::cout << "t is " << t << std::endl;
-    //    if closed t[0] = t[1] - (t[n] - t[n-1]), t[n+1] = t[n] + (t[2] - t[1])
+
+    if (isclosed){
+
+        t[0] = t[1] - (t[n] - t[n-1]);
+        t[n+1] = t[n] + (t[2] - t[1]);
+    }
+    std::cout << "t is " << t << std::endl;
 
 }
 
 template<typename T>
 void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
 {
+    int nsurf1 = n1;
+    int nsurf2 = n2;
 
+    if (_isclosedU)           nsurf1--;
+    if (_isclosedV)           nsurf2--;
 
-    for(int i=0;i<n1;i++){
+    for(int i=0;i<nsurf1;i++){
 
-        for(int j=0;j<n2;j++){
+        for(int j=0;j<nsurf2;j++){
             auto su = new PSimpleSubSurf<T>(s,_u[i],_u[i+2],_u[i+1],_v[j],_v[j+2],_v[j+1]);
             su->toggleDefaultVisualizer();
             su->replot(21,21,1,1);
             su->setCollapsed(true);
             _S[i][j] = su;
             this->insert(su);
+        }
+
+    }
+    if (_isclosedU){
+        for(int indexU = 0;indexU<n2;indexU++){
+
+            _S[n1-1][indexU] = _S[0][indexU];
+
+        }
+
+    }
+    if (_isclosedV){
+        for(int indexV = 0;indexV<n1;indexV++){
+
+            _S[indexV][n2-1] = _S[indexV][0];
         }
 
     }
