@@ -115,7 +115,7 @@ set( HDRS
   mycurveblender2.h
   myGERBScurve4.h
   simplesubsurf.h
-  myGERBScurve6.h
+  myGERBSsurface6.h
   myclosedcurve.h
   )
 
