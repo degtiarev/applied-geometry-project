@@ -6,7 +6,7 @@
 #include "mycurveblender2.h"
 #include "myGERBScurve4.h"
 #include "MyGERBSsurface6.h"
-#include "myclosedcurve.h"
+#include "circle.h"
 
 //// hidmanager
 //#include "hidmanager/defaulthidmanager.h"
@@ -69,12 +69,6 @@ void Scenario::initializeScenario() {
   scene()->insertCamera( top_rcpair.camera.get() );
   top_rcpair.renderer->reshape( GMlib::Vector<int,2>(init_viewport_size, init_viewport_size) );
 
-
-
-
-
-
-
   // Surface visualizers
   // auto surface_visualizer = new GMlib::PSurfNormalsVisualizer<float,3>;
 
@@ -92,86 +86,76 @@ void Scenario::initializeScenario() {
   scene()->insert(mycurve);
 
   // My spline
-  GMlib::DVector<GMlib::Vector<float,3>>c(8);
-    c[0] = GMlib::Vector<float,3>(0,0,0);
-    c[1] = GMlib::Vector<float,3>(1,1,0);
-    c[2] = GMlib::Vector<float,3>(2,2,0);
-    c[3] = GMlib::Vector<float,3>(3,3,0);
-    c[4] = GMlib::Vector<float,3>(4,3,0);
-    c[5] = GMlib::Vector<float,3>(5,1,0);
-    c[6] = GMlib::Vector<float,3>(6,0.5,0);
-    c[7] = GMlib::Vector<float,3>(7,0,0);
-
-  myPCurve = new GMlib::MSpline<float>(c, 2, 8);
+  GMlib::DVector<GMlib::Vector<float,3>> myDVector(8);
+    myDVector[0] = GMlib::Vector<float,3>(0,0,0);
+    myDVector[1] = GMlib::Vector<float,3>(1,1,0);
+    myDVector[2] = GMlib::Vector<float,3>(2,2,0);
+    myDVector[3] = GMlib::Vector<float,3>(3,3,0);
+    myDVector[4] = GMlib::Vector<float,3>(4,3,0);
+    myDVector[5] = GMlib::Vector<float,3>(5,1,0);
+    myDVector[6] = GMlib::Vector<float,3>(6,0.5,0);
+    myDVector[7] = GMlib::Vector<float,3>(7,0,0);
+  myPCurve = new GMlib::MySpline<float>(myDVector, 2, 8);
   myPCurve->toggleDefaultVisualizer();
   myPCurve->replot(200,0);
   scene()->insert(myPCurve);
 
-  // My blender 2
+  // Multicurve (Curve blender 2)
   GMlib::MyCurve<float>* myCurve1 = new GMlib::MyCurve<float>();
   GMlib::MyCurve<float>* myCurve2 = new GMlib::MyCurve<float>();
-  myCurve2->translate(GMlib::Vector<float,3>(0,3,0));
-  myCurve1->toggleDefaultVisualizer();
-  myCurve1->replot(200,0);
-  scene()->insert(myCurve1);
-
-  myCurve2->toggleDefaultVisualizer();
-  myCurve2->replot(200,0);
-  scene()->insert(myCurve2);
-
-  auto myMultiCurve = new GMlib::MyCurveBlender2<float>(myCurve1, myCurve2,0.3);
+  auto myMultiCurve = new GMlib::MyCurveBlender2<float>(myCurve1, myCurve2, 0.3);
   myMultiCurve->toggleDefaultVisualizer();
   myMultiCurve->setColor(GMlib::GMcolor::blue());
+  myMultiCurve->translate(GMlib::Vector<float,3>(0,15,0));
   myMultiCurve->replot(200,0);
   scene()->insert(myMultiCurve);
 
-  // my GERBS curve 4
-  mybcurve = new GMlib::MyGERBScurve4<float>(myCurve1,8);
-  mybcurve->toggleDefaultVisualizer();
-  mybcurve->translate(GMlib::Vector<float,3>(3,0,0));
-  mybcurve->replot(200,0);
-  scene()->insert(mybcurve);
+  // Open curve (GERBS curve 4)
+  openBCurve = new GMlib::MyGERBScurve4<float>(myCurve1,8);
+  openBCurve->toggleDefaultVisualizer();
+  openBCurve->translate(GMlib::Vector<float,3>(0,-8,0));
+  openBCurve->replot(200,0);
+  scene()->insert(openBCurve);
 
-  // my GERBS curve 6
+  // Closed curve - circle (GERBS curve 4)
+  auto circle = new GMlib::Circle<float>();
+  closedBCurve = new GMlib::MyGERBScurve4<float>(circle,20);
+  closedBCurve->toggleDefaultVisualizer();
+  closedBCurve->translate(GMlib::Vector<float,3>(-6,-6,0));
+  closedBCurve->replot(200,0);
+  scene()->insert(closedBCurve);
+
+  // Plane (GERBS surface 6)
   auto myMSurface = new GMlib::PPlane<float>(GMlib::Point<float,3>(-10.0f, 10.0f, 20.0f),
-                             GMlib::Vector<float,3>(0.0f, -20.0f, 0.0f),
-                             GMlib::Vector<float,3>(0.0f, 0.0f, -20.0f));
-  auto normalVis1 = new GMlib::PSurfNormalsVisualizer<float,3>();
+                                             GMlib::Vector<float,3>(0.0f, -20.0f, 0.0f),
+                                             GMlib::Vector<float,3>(0.0f, 0.0f, -20.0f));
+  auto planeVisualizer = new GMlib::PSurfNormalsVisualizer<float,3>();
+  planeBSurface = new GMlib::MyGERBSsurface6<float>(myMSurface,4,4);
+  planeBSurface->toggleDefaultVisualizer();
+  planeBSurface->insertVisualizer(planeVisualizer);
+  planeBSurface->translate(GMlib::Vector<float,3>(-6,-0,0));
+  planeBSurface->replot(50,50,1,1);
+  scene()->insert(planeBSurface);
 
-  mybsurfe = new GMlib::MyGERBSsurface6<float>(myMSurface,4,4);
-  mybsurfe->toggleDefaultVisualizer();
-  mybsurfe->insertVisualizer(normalVis1);
-  mybsurfe->replot(50,50,1,1);
-  scene()->insert(mybsurfe);
+  // torus (GERBS surface 6)
+  auto Torus = new GMlib::PTorus<float>(1.5f,0.5f,0.5f);
+  auto torusVisualizer = new GMlib::PSurfNormalsVisualizer<float,3>();
+  torusBSurface = new GMlib::MyGERBSsurface6<float>(Torus,4,4);
+  torusBSurface->toggleDefaultVisualizer();
+  torusBSurface->insertVisualizer(torusVisualizer);
+  torusBSurface->translate(GMlib::Vector<float,3>(-6,0,0));
+  torusBSurface->replot(50,50,1,1);
+  scene()->insert(torusBSurface);
 
-  // my closed curve
-  auto myClosedCurve = new GMlib::MyClosedCurve<float>();
-  mybcurve = new GMlib::MyGERBScurve4<float>(myClosedCurve,20);
-  mybcurve->toggleDefaultVisualizer();
-  mybcurve->translate(GMlib::Vector<float,3>(3,0,0));
-  mybcurve->replot(200,0);
-  scene()->insert(mybcurve);
-
-  // torus
-  auto myClosedTorus = new GMlib::PTorus<float>(1.5f,0.5f,0.5f);
-  auto normalVis2 = new GMlib::PSurfNormalsVisualizer<float,3>();
-
-  mybsurfe = new GMlib::MyGERBSsurface6<float>(myClosedTorus,4,4);
-  mybsurfe->toggleDefaultVisualizer();
-  mybsurfe->insertVisualizer(normalVis2);
-  mybsurfe->replot(50,50,1,1);
-  scene()->insert(mybsurfe);
-
-  //cylinder
-  auto cylinder=new GMlib::PCylinder<float>(2,2,15);
-  auto normalVis3 = new GMlib::PSurfNormalsVisualizer<float,3>();
-
-  mybsurfe = new GMlib::MyGERBSsurface6<float>(cylinder,4,4);
-  mybsurfe->toggleDefaultVisualizer();
-  mybsurfe->insertVisualizer(normalVis3);
-  mybsurfe->replot(50,50,1,1);
-  scene()->insert(mybsurfe);
-
+  // cylinder (GERBS surface 6)
+  auto cylinder = new GMlib::PCylinder<float>(1,1,6);
+  auto cylinderVisualizer = new GMlib::PSurfNormalsVisualizer<float,3>();
+  cylinderBSurface = new GMlib::MyGERBSsurface6<float>(cylinder,4,4);
+  cylinderBSurface->toggleDefaultVisualizer();
+  cylinderBSurface->insertVisualizer(cylinderVisualizer);
+  cylinderBSurface->replot(50,50,1,1);
+  cylinderBSurface->translate(GMlib::Vector<float,3>(-6,8,0));
+  scene()->insert(cylinderBSurface);
 
   //surface->test01();
 
@@ -186,11 +170,23 @@ void Scenario::callGL()
     if (myPCurve)
         myPCurve->replot();
 
-    if (mybcurve){
-        mybcurve->replot(100,0);
+    if (openBCurve){
+        openBCurve->replot(100,0);
     }
 
-    if (mybsurfe){
-        mybsurfe->replot(50,50,1,1);
+    if (closedBCurve){
+        closedBCurve->replot(100,0);
+    }
+
+    if (planeBSurface){
+        planeBSurface->replot(50,50,1,1);
+    }
+
+    if (torusBSurface){
+        torusBSurface->replot(50,50,1,1);
+    }
+
+    if (cylinderBSurface){
+        cylinderBSurface->replot(50,50,1,1);
     }
 }

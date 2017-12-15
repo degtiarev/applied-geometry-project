@@ -33,18 +33,18 @@ namespace GMlib {
 
 template <typename T>
 inline
-MyClosedCurve<T>::MyClosedCurve( T radius ) {
+Circle<T>::Circle( T radius ) {
     _r = radius;
 }
 
 
 template <typename T>
 inline
-MyClosedCurve<T>::MyClosedCurve( const MyClosedCurve<T>& copy ) : PCurve<T,3>(copy) {}
+Circle<T>::Circle( const Circle<T>& copy ) : PCurve<T,3>(copy) {}
 
 
 template <typename T>
-MyClosedCurve<T>::~MyClosedCurve() {}
+Circle<T>::~Circle() {}
 
 
 //**************************************
@@ -53,14 +53,14 @@ MyClosedCurve<T>::~MyClosedCurve() {}
 
 template <typename T>
 inline
-T MyClosedCurve<T>::getRadius() const {
+T Circle<T>::getRadius() const {
     return _r;
 }
 
 
 template <typename T>
 inline
-void MyClosedCurve<T>::setRadius( T radius ) {
+void Circle<T>::setRadius( T radius ) {
     _r = radius;
 }
 
@@ -70,7 +70,7 @@ void MyClosedCurve<T>::setRadius( T radius ) {
 //***************************************************
 
 template <typename T>
-bool MyClosedCurve<T>::isClosed() const {
+bool Circle<T>::isClosed() const {
     return true;
 }
 
@@ -80,7 +80,7 @@ bool MyClosedCurve<T>::isClosed() const {
 //******************************************************
 
 template <typename T>
-void MyClosedCurve<T>::eval( T t, int d, bool /*l*/ ) const {
+void Circle<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
 
@@ -90,19 +90,16 @@ void MyClosedCurve<T>::eval( T t, int d, bool /*l*/ ) const {
     const T ct1 = cos(t);
     const T st1 = sin(t);
 
-    //    this->_p[0][0] = ct;
-    //    this->_p[0][1] = st;
-    //    this->_p[0][2] = T(0);
     this->_p[0][0] = ct1;
     this->_p[0][1] = st1;
     this->_p[0][2] = 0;
     if( this->_dm == GM_DERIVATION_EXPLICIT ) {
-
         if( d > 0 ) {
             this->_p[1][0] = -st;
             this->_p[1][1] =  ct;
             this->_p[1][2] =  T(0);
         }
+
         if( d > 1 ) this->_p[2] = -this->_p[0];
         if( d > 2 ) this->_p[3] = -this->_p[1];
         if( d > 3 ) this->_p[4] = this->_p[0];
@@ -114,13 +111,13 @@ void MyClosedCurve<T>::eval( T t, int d, bool /*l*/ ) const {
 
 
 template <typename T>
-T MyClosedCurve<T>::getStartP() const {
+T Circle<T>::getStartP() const {
     return T(0);
 }
 
 
 template <typename T>
-T MyClosedCurve<T>::getEndP()const {
+T Circle<T>::getEndP()const {
     return T( M_2PI );
 }
 

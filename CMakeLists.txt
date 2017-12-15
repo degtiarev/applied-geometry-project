@@ -116,7 +116,7 @@ set( HDRS
   myGERBScurve4.h
   simplesubsurf.h
   myGERBSsurface6.h
-  myclosedcurve.h
+  circle.h
   )
 
 set( SRCS

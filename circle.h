@@ -23,8 +23,8 @@
 
 
 
-#ifndef GM_MyClosedCurve_H
-#define GM_MyClosedCurve_H
+#ifndef GM_Circle_H
+#define GM_Circle_H
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
@@ -34,12 +34,12 @@ namespace GMlib {
 
 
 template <typename T>
-class MyClosedCurve : public PCurve<T,3> {
-    GM_SCENEOBJECT(MyClosedCurve)
+class Circle : public PCurve<T,3> {
+    GM_SCENEOBJECT(Circle)
     public:
-        MyClosedCurve( T radius = T(40) );
-    MyClosedCurve( const MyClosedCurve<T>& copy );
-    virtual ~MyClosedCurve();
+        Circle( T radius = T(40) );
+    Circle( const Circle<T>& copy );
+    virtual ~Circle();
 
     // Public local functions
     T               getRadius() const;
@@ -67,7 +67,7 @@ protected:
 } // END namepace GMlib
 
 // Include MyClosedCurve class function implementations
-#include "MyClosedCurve.c"
+#include "circle.c"
 
 
-#endif // GM_PARAMETRICS_CURVES_MyClosedCurve_H
+#endif // GM_Circle_H

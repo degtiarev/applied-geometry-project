@@ -33,7 +33,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  MSpline<T>::MSpline(const DVector<Vector<T,3>> &c, int d) {
+  MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
     _d = d;
     _makeKnotVector(c.getDim());
     _C = c;
@@ -50,7 +50,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  MSpline<T>::MSpline(const DVector<Vector<T,3>> &p, int d, int n) {
+  MySpline<T>::MySpline(const DVector<Vector<T,3>> &p, int d, int n) {
 
       _d = d;
       _makeKnotVector(n);
@@ -63,11 +63,11 @@ namespace GMlib {
 
   template <typename T>
   inline
-  MSpline<T>::MSpline( const MSpline<T>& copy ) : PCurve<T,3>(copy) {}
+  MySpline<T>::MySpline( const MySpline<T>& copy ) : PCurve<T,3>(copy) {}
 
 
   template <typename T>
-  MSpline<T>::~MSpline() {}
+  MySpline<T>::~MySpline() {}
 
 
   //**************************************
@@ -80,7 +80,7 @@ namespace GMlib {
   //***************************************************
 
   template <typename T>
-  bool MSpline<T>::isClosed() const {
+  bool MySpline<T>::isClosed() const {
     return false;
   }
 
@@ -90,7 +90,7 @@ namespace GMlib {
   //******************************************************
 
   template <typename T>
-  void MSpline<T>::eval( T t, int d, bool /*l*/ ) const {
+  void MySpline<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
@@ -103,25 +103,25 @@ namespace GMlib {
 
 
   template <typename T>
-  T MSpline<T>::getStartP() const {
+  T MySpline<T>::getStartP() const {
       return _t(_d);
   }
 
 
   template <typename T>
-  T MSpline<T>::getEndP()const {
+  T MySpline<T>::getEndP()const {
       return  _t(_C.getDim());
   }
 
   template<typename T>
-  T MSpline<T>::_W(int i, int d, T t) const
+  T MySpline<T>::_W(int i, int d, T t) const
   {
       return ((t - _t(i))/(_t(i+d)-_t(i)));
 
   }
 
   template<typename T>
-  int MSpline<T>::_findIndex(T t) const
+  int MySpline<T>::_findIndex(T t) const
   {
     int i=_d;
     int n = _C.getDim();
@@ -136,7 +136,7 @@ namespace GMlib {
   }
 
   template<typename T>
-  void MSpline<T>::_makeKnotVector(int n)
+  void MySpline<T>::_makeKnotVector(int n)
   {
       //n = _C.getDim();
       _t.setDim(n+_d+1);
@@ -154,7 +154,7 @@ namespace GMlib {
   }
 
   template<typename T>
-  void MSpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
+  void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
   {
       int m = p.getDim();
       _C.setDim(n);

@@ -23,8 +23,8 @@
 
 
 
-#ifndef GM_PARAMETRICS_CURVES_MSpline_H
-#define GM_PARAMETRICS_CURVES_MSpline_H
+#ifndef GM_PARAMETRICS_CURVES_MySpline_H
+#define GM_PARAMETRICS_CURVES_MySpline_H
 
 
 #include "C:\Users\Aleksei\Desktop\applied-geometry-project\gmlib\modules\parametrics\src\gmpcurve.h"
@@ -35,13 +35,13 @@ namespace GMlib {
 
 
   template <typename T>
-  class MSpline : public PCurve<T,3> {
-    GM_SCENEOBJECT(MSpline)
+  class MySpline : public PCurve<T,3> {
+    GM_SCENEOBJECT(MySpline)
   public:
-    MSpline( const DVector<Vector<T,3>> &c, int d);
-    MSpline( const DVector<Vector<T,3>> &p, int d, int n);
-    MSpline( const MSpline<T>& copy );
-    virtual ~MSpline();
+    MySpline( const DVector<Vector<T,3>> &c, int d);
+    MySpline( const DVector<Vector<T,3>> &p, int d, int n);
+    MySpline( const MySpline<T>& copy );
+    virtual ~MySpline();
 
     // Public local functions
 
@@ -74,12 +74,12 @@ namespace GMlib {
     void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
 
 
-  }; // END class MSpline
+  }; // END class MySpline
 
 } // END namepace GMlib
 
-// Include MSpline class function implementations
+// Include MySpline class function implementations
 #include "myspline.c"
 
 
-#endif // GM_PARAMETRICS_CURVES_MSpline_H
+#endif // GM_PARAMETRICS_CURVES_MySpline_H
