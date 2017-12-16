@@ -87,8 +87,8 @@ void MyCurve<T>::eval( T t, int d, bool /*l*/ ) const {
     const T ct = _r * cos(t);
     const T st = _r * sin(t);
 
-    this->_p[0][0] = cos(t);
-    this->_p[0][1] = sin(t);
+    this->_p[0][0] = t * cos(t);
+    this->_p[0][1] = t * sin(t);
     this->_p[0][2] = t;
 
     if( this->_dm == GM_DERIVATION_EXPLICIT ) {

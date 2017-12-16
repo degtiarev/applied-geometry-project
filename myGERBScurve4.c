@@ -117,7 +117,7 @@ int MyGERBScurve4<T>::_findIndex(T t) const
             break;
     }
     if (i >= n){
-        i=n-1;
+        i=n - 1;
     }
     return i;
 }
@@ -126,18 +126,18 @@ template<typename T>
 void MyGERBScurve4<T>::_makeKnotVector(int n)
 {
 
-    auto local_d = (_e-_s)/(n-1);
+    auto local_d = (_e - _s)/(n - 1);
 
-    _t.setDim(n+_d+1);
+    _t.setDim(n + _d+1);
     _t[0] = _t[1] = _s;
 
-    for(int i = 0;i<n;i++){
+    for(int i = 0; i<n ;i++){
         _t[i+2] = _s+(i+1)*local_d;
     }
 
     _t[n] = _t[n+1] = _e;
 
-    std::cout << "_t = " << _t << std::endl;
+    //std::cout << "_t = " << _t << std::endl;
 
     if (_isclosed){
 
@@ -155,7 +155,7 @@ void MyGERBScurve4<T>::_createLocalCurves(PCurve<T,3> *c, int n){
 
     // go trough for all local curve and rotate each subcurve
     _C.setDim(n);
-    for(int i=0;i<n-1;i++){
+    for(int i=0; i<n-1; i++){
         auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);
         cu->toggleDefaultVisualizer();
         cu->replot(21,0);

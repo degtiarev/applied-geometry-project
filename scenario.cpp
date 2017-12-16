@@ -83,7 +83,7 @@ void Scenario::initializeScenario() {
     auto mycurve = new GMlib::MyCurve<float>();
     mycurve->toggleDefaultVisualizer();
     mycurve->replot(200,0);
-    mycurve->translate(GMlib::Vector<float,3>(0,7,0));
+    mycurve->translate(GMlib::Vector<float,3>(0,10,0));
     scene()->insert(mycurve);
 
     // My spline
@@ -104,11 +104,21 @@ void Scenario::initializeScenario() {
 
     // Multicurve (Curve blender 2)
     GMlib::MyCurve<float>* myCurve1 = new GMlib::MyCurve<float>();
+    myCurve1->toggleDefaultVisualizer();
+    myCurve1->translate(GMlib::Vector<float,3>(0,3,0));
+    myCurve1->replot(200,0);
+    scene()->insert(myCurve1);
+
     GMlib::MyCurve<float>* myCurve2 = new GMlib::MyCurve<float>();
+    myCurve2->toggleDefaultVisualizer();
+    //    myCurve2->translate(GMlib::Vector<float,3>(0,15,0));
+    myCurve2->replot(200,0);
+    scene()->insert(myCurve2);
+
     auto myMultiCurve = new GMlib::MyCurveBlender2<float>(myCurve1, myCurve2, 0.3);
     myMultiCurve->toggleDefaultVisualizer();
     myMultiCurve->setColor(GMlib::GMcolor::blue());
-    myMultiCurve->translate(GMlib::Vector<float,3>(0,15,0));
+    //    myMultiCurve->translate(GMlib::Vector<float,3>(0,15,0));
     myMultiCurve->replot(200,0);
     scene()->insert(myMultiCurve);
 
