@@ -84,13 +84,8 @@ void MyGERBScurve4<T>::eval( T t, int d, bool /*l*/ ) const {
     const T b1 = 1-_B(_W(i,1,t));
     const T b2 = _B(_W(i,1,t));
 
-
-
     //                 local curves
-    this->_p = b1*_C[i-1]->evaluateParent(t,0) + b2*_C[i]->evaluateParent(t,0);//_C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
-
-
-
+    this->_p = b1*_C[i-1]->evaluateParent(t,0) + b2*_C[i]->evaluateParent(t,0);
 }
 
 
@@ -149,14 +144,16 @@ void MyGERBScurve4<T>::_makeKnotVector(int n)
         _t[0] = _t[1] - (_t[n] - _t[n-1]);
         _t[n+1] = _t[n] + (_t[2] - _t[1]);
     }
-    std::cout << "closed _t = " << _t << std::endl;
+    //std::cout << "closed _t = " << _t << std::endl;
     //if closed t[0] = t[1] - (t[n] - t[n-1]), t[n+1] = t[n] + (t[2] - t[1])
 
 }
 
+// 5 task
 template<typename T>
 void MyGERBScurve4<T>::_createLocalCurves(PCurve<T,3> *c, int n){
 
+    // go trough for all local curve and rotate each subcurve
     _C.setDim(n);
     for(int i=0;i<n-1;i++){
         auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);

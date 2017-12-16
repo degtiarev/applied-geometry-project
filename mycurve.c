@@ -31,56 +31,56 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
-  template <typename T>
-  inline
-  MyCurve<T>::MyCurve( T radius ) {
+template <typename T>
+inline
+MyCurve<T>::MyCurve( T radius ) {
     _r = radius;
-  }
+}
 
 
-  template <typename T>
-  inline
-  MyCurve<T>::MyCurve( const MyCurve<T>& copy ) : PCurve<T,3>(copy) {}
+template <typename T>
+inline
+MyCurve<T>::MyCurve( const MyCurve<T>& copy ) : PCurve<T,3>(copy) {}
 
 
-  template <typename T>
-  MyCurve<T>::~MyCurve() {}
+template <typename T>
+MyCurve<T>::~MyCurve() {}
 
 
-  //**************************************
-  //        Public local functons       **
-  //**************************************
+//**************************************
+//        Public local functons       **
+//**************************************
 
-  template <typename T>
-  inline
-  T MyCurve<T>::getRadius() const {
+template <typename T>
+inline
+T MyCurve<T>::getRadius() const {
     return _r;
-  }
+}
 
 
-  template <typename T>
-  inline
-  void MyCurve<T>::setRadius( T radius ) {
-      _r = radius;
-  }
+template <typename T>
+inline
+void MyCurve<T>::setRadius( T radius ) {
+    _r = radius;
+}
 
 
-  //***************************************************
-  // Overrided (public) virtual functons from PCurve **
-  //***************************************************
+//***************************************************
+// Overrided (public) virtual functons from PCurve **
+//***************************************************
 
-  template <typename T>
-  bool MyCurve<T>::isClosed() const {
+template <typename T>
+bool MyCurve<T>::isClosed() const {
     return true;
-  }
+}
 
 
-  //******************************************************
-  // Overrided (protected) virtual functons from PCurve **
-  //******************************************************
+//******************************************************
+// Overrided (protected) virtual functons from PCurve **
+//******************************************************
 
-  template <typename T>
-  void MyCurve<T>::eval( T t, int d, bool /*l*/ ) const {
+template <typename T>
+void MyCurve<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
 
@@ -93,31 +93,31 @@ namespace GMlib {
 
     if( this->_dm == GM_DERIVATION_EXPLICIT ) {
 
-      if( d > 0 ) {
-        this->_p[1][0] = -st;
-        this->_p[1][1] =  ct;
-        this->_p[1][2] =  T(0);
-      }
-      if( d > 1 ) this->_p[2] = -this->_p[0];
-      if( d > 2 ) this->_p[3] = -this->_p[1];
-      if( d > 3 ) this->_p[4] = this->_p[0];
-      if( d > 4 ) this->_p[5] = this->_p[1];
-      if( d > 5 ) this->_p[6] = this->_p[2];
-      if( d > 6 ) this->_p[7] = this->_p[3];
+        if( d > 0 ) {
+            this->_p[1][0] = -st;
+            this->_p[1][1] =  ct;
+            this->_p[1][2] =  T(0);
+        }
+        if( d > 1 ) this->_p[2] = -this->_p[0];
+        if( d > 2 ) this->_p[3] = -this->_p[1];
+        if( d > 3 ) this->_p[4] = this->_p[0];
+        if( d > 4 ) this->_p[5] = this->_p[1];
+        if( d > 5 ) this->_p[6] = this->_p[2];
+        if( d > 6 ) this->_p[7] = this->_p[3];
     }
-  }
+}
 
 
-  template <typename T>
-  T MyCurve<T>::getStartP() const {
+template <typename T>
+T MyCurve<T>::getStartP() const {
     return T(0);
-  }
+}
 
 
-  template <typename T>
-  T MyCurve<T>::getEndP()const {
+template <typename T>
+T MyCurve<T>::getEndP()const {
     return T( M_2PI );
-  }
+}
 
 
 } // END namespace GMlib

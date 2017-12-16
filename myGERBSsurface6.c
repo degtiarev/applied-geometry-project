@@ -60,7 +60,6 @@ GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
 
     _S.setDim(n1,n2);
     _createLocalSurfaces(s,n1,n2);
-
 }
 
 template <typename T>
@@ -89,7 +88,6 @@ MyGERBSsurface6<T>::~MyGERBSsurface6() {}
 template <typename T>
 void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) const {
 
-
     this->_p.setDim( d1 + 1,d2+1);
     int i = _findIndex(u,_u);
     int j = _findIndex(v,_v);
@@ -116,7 +114,7 @@ void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) cons
     DMatrix< Vector<T,3> > C3 = _S(i)(j-1)->evaluateParent(u,v,d1,d2);
     DMatrix< Vector<T,3> > C4 = _S(i)(j)->evaluateParent(u,v,d1,d2);
 
-    //                 local curves
+    //    local curves
     //    this->_p = Bu*(C^Bv);
     auto h1 = Bu[0][0]*C1[0][0] + Bu[0][1]*C3[0][0];
     auto h2 = Bu[0][0]*C2[0][0] + Bu[0][1]*C4[0][0];
@@ -135,9 +133,6 @@ void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) cons
     this->_p[1][0] = h3*Bv[0][0] + h4*Bv[1][0] + h5*Bv[0][0] + h6*Bv[1][0];
 
     this->_p[0][1] = h1*Bv[0][1] + h2*Bv[1][1] + h7*Bv[0][0] + h8*Bv[1][0];
-
-
-
 }
 
 
@@ -168,7 +163,6 @@ template<typename T>
 T MyGERBSsurface6<T>::_W(int i, int d, T t,const DVector<T>& knot) const
 {
     return ((t - knot(i))/(knot(i+d)-knot(i)));
-
 }
 
 template<typename T>
@@ -176,20 +170,20 @@ int MyGERBSsurface6<T>::_findIndex(T t,const DVector<T>& knot) const
 {
     int i=_d;
     int n = knot.getDim()-2;
-    for(;i<=n;i++){
+    for(; i<=n; i++){
         if(t>=knot(i) && t<knot(i+1))
             break;
     }
     if (i >= n){
-        i=n-1;
+        i = n - 1;
     }
+
     return i;
 }
 
 template<typename T>
 void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end, bool isclosed)
 {
-
     auto local_d = (end-start)/(n-1);
 
     t.setDim(n+_d+1);
@@ -197,18 +191,15 @@ void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end, boo
 
     for(int i = 1;i<n;i++){
         t[i+1] = start+i*local_d;
-
     }
 
     t[n] = t[n+1] = end;
 
     if (isclosed){
-
         t[0] = t[1] - (t[n] - t[n-1]);
         t[n+1] = t[n] + (t[2] - t[1]);
     }
-    std::cout << "t is " << t << std::endl;
-
+    //std::cout << "t is " << t << std::endl;
 }
 
 template<typename T>
@@ -230,24 +221,19 @@ void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
             _S[i][j] = su;
             this->insert(su);
         }
-
     }
+
     if (_isclosedU){
         for(int indexU = 0;indexU<n2;indexU++){
-
             _S[n1-1][indexU] = _S[0][indexU];
-
         }
-
     }
+
     if (_isclosedV){
         for(int indexV = 0;indexV<n1;indexV++){
-
             _S[indexV][n2-1] = _S[indexV][0];
         }
-
     }
-
 }
 
 template<typename T>
@@ -261,14 +247,12 @@ template<typename T>
 bool MyGERBSsurface6<T>::isClosedU() const
 {
     return false;
-
 }
 
 template<typename T>
 bool MyGERBSsurface6<T>::isClosedV() const
 {
     return false;
-
 }
 
 template<typename T>

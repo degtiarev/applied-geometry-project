@@ -34,11 +34,11 @@
 namespace GMlib {
 
 
-  template <typename T>
-  class MySpline : public PCurve<T,3> {
+template <typename T>
+class MySpline : public PCurve<T,3> {
     GM_SCENEOBJECT(MySpline)
-  public:
-    MySpline( const DVector<Vector<T,3>> &c, int d);
+    public:
+        MySpline( const DVector<Vector<T,3>> &c, int d);
     MySpline( const DVector<Vector<T,3>> &p, int d, int n);
     MySpline( const MySpline<T>& copy );
     virtual ~MySpline();
@@ -54,7 +54,7 @@ namespace GMlib {
     // from PCurve
     bool                isClosed() const override;
 
-  protected:
+protected:
     // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
@@ -66,7 +66,7 @@ namespace GMlib {
     DVector<T>           _t; //knot vector
     int                  _d; //degree
 
-  private:
+private:
 
     T                   _W(int i, int d, T t) const;
     int                 _findIndex(T t) const;
@@ -74,7 +74,7 @@ namespace GMlib {
     void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
 
 
-  }; // END class MySpline
+}; // END class MySpline
 
 } // END namepace GMlib
 

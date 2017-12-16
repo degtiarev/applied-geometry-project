@@ -34,9 +34,9 @@ namespace GMlib {
 template<typename T>
 MyCurveBlender2<T>::MyCurveBlender2( PCurve<T,3> *c1,  PCurve<T,3> *c2, T x)
 {
-     _x = x;
-     _C1 = c1;
-     _C2 = c2;
+    _x = x;
+    _C1 = c1;
+    _C2 = c2;
 }
 
 
@@ -80,26 +80,25 @@ void MyCurveBlender2<T>::eval( T t, int d, bool /*l*/ ) const {
         this->_p = b1*_C1->evaluateParent(t,0) + b2*_C2->evaluateParent(_C2->getParStart()+_t1*_x*_C2->getParDelta(),0);//_C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
     }
     else
-
-      this->_p = _C2->evaluateParent(_C2->getParStart()+t-_C1->getParEnd()+_x*_C2->getParDelta(),0);
+        this->_p = _C2->evaluateParent(_C2->getParStart()+t-_C1->getParEnd()+_x*_C2->getParDelta(),0);
 }
 
 
 template <typename T>
 T MyCurveBlender2<T>::getStartP() const {
-   return _C1->getParStart();
+    return _C1->getParStart();
 }
 
 
 template <typename T>
 T MyCurveBlender2<T>::getEndP()const {
-       return _C1->getParEnd()+(1-_x)*_C2->getParDelta();
+    return _C1->getParEnd()+(1-_x)*_C2->getParDelta();
 }
 
 template<typename T>
 T MyCurveBlender2<T>::_B(T t) const
 {
-  return 3*(t*t) - 2*(t*t*t);
+    return 3*(t*t) - 2*(t*t*t);
 }
 
 

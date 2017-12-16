@@ -31,66 +31,66 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
-  template <typename T>
-  inline
-  MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
+template <typename T>
+inline
+MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
     _d = d;
     _makeKnotVector(c.getDim());
     _C = c;
 
     for (int i=0;i<_C.getDim();i++){
-            Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
-            this->insert(s);
+        Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
+        this->insert(s);
+    }
 
-        }
-        auto sk = new SelectorGridVisualizer<T>;
-        sk->setSelectors(_C,0,isClosed());
-        this->insertVisualizer(sk);
-  }
+    auto sk = new SelectorGridVisualizer<T>;
+    sk->setSelectors(_C,0,isClosed());
+    this->insertVisualizer(sk);
+}
 
-  template <typename T>
-  inline
-  MySpline<T>::MySpline(const DVector<Vector<T,3>> &p, int d, int n) {
+template <typename T>
+inline
+MySpline<T>::MySpline(const DVector<Vector<T,3>> &p, int d, int n) {
 
-      _d = d;
-      _makeKnotVector(n);
-      _createControlPoints(p,n);//surfaces
+    _d = d;
+    _makeKnotVector(n);
+    _createControlPoints(p,n); //surfaces
 
-      auto sk = new SelectorGridVisualizer<T>;
-      sk->setSelectors(_C,0,isClosed());
-      this->insertVisualizer(sk);
-  }
+    auto sk = new SelectorGridVisualizer<T>;
+    sk->setSelectors(_C,0,isClosed());
+    this->insertVisualizer(sk);
+}
 
-  template <typename T>
-  inline
-  MySpline<T>::MySpline( const MySpline<T>& copy ) : PCurve<T,3>(copy) {}
-
-
-  template <typename T>
-  MySpline<T>::~MySpline() {}
+template <typename T>
+inline
+MySpline<T>::MySpline( const MySpline<T>& copy ) : PCurve<T,3>(copy) {}
 
 
-  //**************************************
-  //        Public local functons       **
-  //**************************************
+template <typename T>
+MySpline<T>::~MySpline() {}
 
 
-  //***************************************************
-  // Overrided (public) virtual functons from PCurve **
-  //***************************************************
+//**************************************
+//        Public local functons       **
+//**************************************
 
-  template <typename T>
-  bool MySpline<T>::isClosed() const {
+
+//***************************************************
+// Overrided (public) virtual functons from PCurve **
+//***************************************************
+
+template <typename T>
+bool MySpline<T>::isClosed() const {
     return false;
-  }
+}
 
 
-  //******************************************************
-  // Overrided (protected) virtual functons from PCurve **
-  //******************************************************
+//******************************************************
+// Overrided (protected) virtual functons from PCurve **
+//******************************************************
 
-  template <typename T>
-  void MySpline<T>::eval( T t, int d, bool /*l*/ ) const {
+template <typename T>
+void MySpline<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
@@ -99,33 +99,33 @@ namespace GMlib {
     const T b3 = (_W(i,1,t)*_W(i,2,t)); //A[i][j]
 
     this->_p[0] = _C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
-  }
+}
 
 
-  template <typename T>
-  T MySpline<T>::getStartP() const {
-      return _t(_d);
-  }
+template <typename T>
+T MySpline<T>::getStartP() const {
+    return _t(_d);
+}
 
 
-  template <typename T>
-  T MySpline<T>::getEndP()const {
-      return  _t(_C.getDim());
-  }
+template <typename T>
+T MySpline<T>::getEndP()const {
+    return  _t(_C.getDim());
+}
 
-  template<typename T>
-  T MySpline<T>::_W(int i, int d, T t) const
-  {
-      return ((t - _t(i))/(_t(i+d)-_t(i)));
+template<typename T>
+T MySpline<T>::_W(int i, int d, T t) const
+{
+    return ((t - _t(i))/(_t(i+d)-_t(i)));
 
-  }
+}
 
-  template<typename T>
-  int MySpline<T>::_findIndex(T t) const
-  {
+template<typename T>
+int MySpline<T>::_findIndex(T t) const
+{
     int i=_d;
     int n = _C.getDim();
-    for(;i<=n;i++){
+    for(; i<=n; i++){
         if(t>=_t(i) && t<_t(i+1))
             break;
     }
@@ -133,62 +133,63 @@ namespace GMlib {
         i=n-1;
     }
     return i;
-  }
+}
 
-  template<typename T>
-  void MySpline<T>::_makeKnotVector(int n)
-  {
-      //n = _C.getDim();
-      _t.setDim(n+_d+1);
+template<typename T>
+void MySpline<T>::_makeKnotVector(int n)
+{
+    //n = _C.getDim();
+    _t.setDim(n+_d+1);
 
-        for(int i = 0;i<=_d;i++){
-            _t[i] = 0;
+    for(int i = 0; i<=_d; i++){
+        _t[i] = 0;
+    }
+    for(int i=_d+1; i<= n; i++){
+        _t[i] = i-_d;
+    }
+    for(int i=n+1; i<=n+_d; i++){
+        _t[i] = _t(i-1);
+    }
+
+}
+
+template<typename T>
+void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
+{
+    int m = p.getDim();
+    _C.setDim(n);
+    DMatrix<T> A(m,n);
+    for (int i = 0; i<m; i++){
+        for (int j = 0; j<n;j++){
+            A[i][j] = T(0);
         }
-        for(int i=_d+1;i<= n;i++){
-            _t[i] = i-_d;
-        }
-        for(int i=n+1;i<=n+_d;i++){
-            _t[i] = _t(i-1);
-        }
+    }
 
-  }
+    for (int i = 0;i<m;i++){
+        T t = _t[0]+i*(getEndP()-getStartP())/(m-1);
 
-  template<typename T>
-  void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
-  {
-      int m = p.getDim();
-      _C.setDim(n);
-      DMatrix<T> A(m,n);
-      for (int i = 0; i<m; i++){
-          for (int j = 0; j<n;j++){
-              A[i][j] = T(0);
-          }
-      }
+        int j = _findIndex(t);
+        const T b1 = (1-_W(j,1,t))*(1-_W(j-1,2,t));
+        const T b2 = ((1-_W(j,1,t))*_W(j-1,2,t))+(_W(j,1,t)*(1-_W(j,2,t)));
+        const T b3 = (_W(j,1,t)*_W(j,2,t));
 
-      for (int i = 0;i<m;i++){
-          T t = _t[0]+i*(getEndP()-getStartP())/(m-1);
+        A[i][j-2] = b1;
+        A[i][j-1] = b2;
+        A[i][j] = b3;
+    }
 
-          int j = _findIndex(t);
-          const T b1 = (1-_W(j,1,t))*(1-_W(j-1,2,t));
-          const T b2 = ((1-_W(j,1,t))*_W(j-1,2,t))+(_W(j,1,t)*(1-_W(j,2,t)));
-          const T b3 = (_W(j,1,t)*_W(j,2,t));
+    DMatrix<T> Atrans = A;
+    Atrans.transpose();
+    DMatrix<T> B = Atrans*A;
+    B.invert();
+    DVector<Vector<T,3>> x = Atrans*p;
+    _C = B*x;
+    for(int i=0; i<_C.getDim(); i++){
+        Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
+        this->insert(s);
+    }
 
-          A[i][j-2] = b1;
-          A[i][j-1] = b2;
-          A[i][j] = b3;
-      }
-      DMatrix<T> Atrans = A;
-      Atrans.transpose();
-      DMatrix<T> B = Atrans*A;
-      B.invert();
-      DVector<Vector<T,3>> x = Atrans*p;
-      _C = B*x;
-      for(int i=0;i<_C.getDim();i++){
-          Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
-          this->insert(s);
-      }
-
-  }
+}
 
 
 } // END namespace GMlib

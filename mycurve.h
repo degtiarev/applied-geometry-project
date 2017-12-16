@@ -33,11 +33,11 @@
 namespace GMlib {
 
 
-  template <typename T>
-  class MyCurve : public PCurve<T,3> {
+template <typename T>
+class MyCurve : public PCurve<T,3> {
     GM_SCENEOBJECT(MyCurve)
-  public:
-    MyCurve( T radius = T(20) );
+    public:
+        MyCurve( T radius = T(20) );
     MyCurve( const MyCurve<T>& copy );
     virtual ~MyCurve();
 
@@ -52,7 +52,7 @@ namespace GMlib {
     // from PCurve
     bool                isClosed() const override;
 
-  protected:
+protected:
     // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
@@ -62,7 +62,7 @@ namespace GMlib {
     // Protected data for the curve
     T               _r;
 
-  }; // END class PCircle
+}; // END class PCircle
 
 } // END namepace GMlib
 
