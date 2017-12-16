@@ -83,11 +83,11 @@ void Scenario::initializeScenario() {
     auto mycurve = new GMlib::MyCurve<float>();
     mycurve->toggleDefaultVisualizer();
     mycurve->replot(200,0);
-//    mycurve->translate(GMlib::Vector<float,3>(0,13,0));
-//    scene()->insert(mycurve);
+    //    mycurve->translate(GMlib::Vector<float,3>(0,13,0));
+    //    scene()->insert(mycurve);
 
 
-    // My spline using vector control points
+    // My spline using least square
     GMlib::DVector<GMlib::Vector<float,3>> myDVector(8);
     myDVector[0] = GMlib::Vector<float,3>(0,0,0);
     myDVector[1] = GMlib::Vector<float,3>(1,1,0);
@@ -102,15 +102,10 @@ void Scenario::initializeScenario() {
     myPCurve->replot(200,0);
     myPCurve->translate(GMlib::Vector<float,3>(0,9,0));
     scene()->insert(myPCurve);
-
-
-    // My spline using least square
-    int m = 20;
-    GMlib::DVector<GMlib::Vector<float,3>>p(m);
-    for (int i=0;i<m;i++){
-        p[i] = mycurve->getPosition(mycurve->getParStart() + (i*mycurve->getParEnd())/(m-1));
-        //std::cout << p[i] <<std::endl;
-    }
+    //    GMlib::DVector<GMlib::Vector<float,3>>p(20);
+    //    for (int i=0; i<20; i++){
+    //        p[i] = mycurve->getPosition(mycurve->getParStart() + (i*mycurve->getParEnd())/(m-1));
+    //    }
 
 
     // B-spline with vector of control points
@@ -152,7 +147,7 @@ void Scenario::initializeScenario() {
 
     // Closed curve - circle (GERBS curve 4)
     auto circle = new GMlib::Circle<float>();
-    closedBCurve = new GMlib::MyGERBScurve4<float>(circle,20);
+    closedBCurve = new GMlib::MyGERBScurve4<float>(circle,10);
     closedBCurve->toggleDefaultVisualizer();
     closedBCurve->translate(GMlib::Vector<float,3>(-6,-7,0));
     closedBCurve->replot(200,0);
@@ -203,8 +198,13 @@ void Scenario::cleanupScenario() {
 
 void Scenario::callGL()
 {
-    if (myPCurve)
+    if (myPCurve){
         myPCurve->replot();
+    }
+
+    if (myPCurve2Const){
+        myPCurve2Const->replot();
+    }
 
     if (openBCurve){
         openBCurve->replot(100,0);
