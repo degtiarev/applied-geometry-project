@@ -73,20 +73,21 @@ void Scenario::initializeScenario() {
     // auto surface_visualizer = new GMlib::PSurfNormalsVisualizer<float,3>;
 
     // Surface
-    //  auto surface = new TestTorus;
-    //  surface->toggleDefaultVisualizer();
-    //  surface->insertVisualizer(surface_visualizer);
-    //  surface->replot(200,200,1,1);
-    //  scene()->insert(surface);
+    // auto surface = new TestTorus;
+    // surface->toggleDefaultVisualizer();
+    // surface->insertVisualizer(surface_visualizer);
+    // surface->replot(200,200,1,1);
+    // scene()->insert(surface);
 
     // My curve
     auto mycurve = new GMlib::MyCurve<float>();
     mycurve->toggleDefaultVisualizer();
     mycurve->replot(200,0);
-    mycurve->translate(GMlib::Vector<float,3>(0,10,0));
-    scene()->insert(mycurve);
+//    mycurve->translate(GMlib::Vector<float,3>(0,13,0));
+//    scene()->insert(mycurve);
 
-    // My spline
+
+    // My spline using vector control points
     GMlib::DVector<GMlib::Vector<float,3>> myDVector(8);
     myDVector[0] = GMlib::Vector<float,3>(0,0,0);
     myDVector[1] = GMlib::Vector<float,3>(1,1,0);
@@ -99,8 +100,26 @@ void Scenario::initializeScenario() {
     myPCurve = new GMlib::MySpline<float>(myDVector, 2, 8);
     myPCurve->toggleDefaultVisualizer();
     myPCurve->replot(200,0);
-    myPCurve->translate(GMlib::Vector<float,3>(0,15,15));
+    myPCurve->translate(GMlib::Vector<float,3>(0,9,0));
     scene()->insert(myPCurve);
+
+
+    // My spline using least square
+    int m = 20;
+    GMlib::DVector<GMlib::Vector<float,3>>p(m);
+    for (int i=0;i<m;i++){
+        p[i] = mycurve->getPosition(mycurve->getParStart() + (i*mycurve->getParEnd())/(m-1));
+        //std::cout << p[i] <<std::endl;
+    }
+
+
+    // B-spline with vector of control points
+    myPCurve2Const = new GMlib::MySpline<float>(myDVector,2);
+    myPCurve2Const->translate(GMlib::Vector<float,3>(0,15,0));
+    myPCurve2Const->toggleDefaultVisualizer();
+    myPCurve2Const->replot(200,0);
+    scene()->insert(myPCurve2Const);
+
 
     // Multicurve (Curve blender 2)
     GMlib::MyCurve<float>* myCurve1 = new GMlib::MyCurve<float>();
@@ -122,12 +141,14 @@ void Scenario::initializeScenario() {
     myMultiCurve->replot(200,0);
     scene()->insert(myMultiCurve);
 
+
     // Open curve (GERBS curve 4)
     openBCurve = new GMlib::MyGERBScurve4<float>(myCurve1,8);
     openBCurve->toggleDefaultVisualizer();
-    openBCurve->translate(GMlib::Vector<float,3>(0,-8,0));
+    openBCurve->translate(GMlib::Vector<float,3>(0,-10,0));
     openBCurve->replot(200,0);
     scene()->insert(openBCurve);
+
 
     // Closed curve - circle (GERBS curve 4)
     auto circle = new GMlib::Circle<float>();
@@ -137,6 +158,7 @@ void Scenario::initializeScenario() {
     closedBCurve->replot(200,0);
     scene()->insert(closedBCurve);
 
+
     // Plane (GERBS surface 6)
     auto myMSurface = new GMlib::PPlane<float>(GMlib::Point<float,3>(-10.0f, 10.0f, 20.0f),
                                                GMlib::Vector<float,3>(0.0f, -20.0f, 0.0f),
@@ -145,9 +167,10 @@ void Scenario::initializeScenario() {
     planeBSurface = new GMlib::MyGERBSsurface6<float>(myMSurface,4,4);
     planeBSurface->toggleDefaultVisualizer();
     planeBSurface->insertVisualizer(planeVisualizer);
-    planeBSurface->translate(GMlib::Vector<float,3>(-5,-0,0));
+    planeBSurface->translate(GMlib::Vector<float,3>(-3,-0,0));
     planeBSurface->replot(50,50,1,1);
     scene()->insert(planeBSurface);
+
 
     // torus (GERBS surface 6)
     auto Torus = new GMlib::PTorus<float>(1.5f,0.5f,0.5f);
@@ -158,6 +181,7 @@ void Scenario::initializeScenario() {
     torusBSurface->translate(GMlib::Vector<float,3>(-6,0,0));
     torusBSurface->replot(50,50,1,1);
     scene()->insert(torusBSurface);
+
 
     // cylinder (GERBS surface 6)
     auto cylinder = new GMlib::PCylinder<float>(1,1,6);
