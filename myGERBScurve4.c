@@ -100,13 +100,15 @@ T MyGERBScurve4<T>::getEndP()const {
     return _t(_C.getDim());
 }
 
-template<typename T>
+template<typename T> // index i from knotvector, d = order of the matrix, t from GMlib for eval
 T MyGERBScurve4<T>::_W(int i, int d, T t) const
 {
     return ((t - _t(i))/(_t(i+d)-_t(i)));
-
 }
 
+// ti < t <= ti+1
+// basis functions different from 0
+// which control points we use
 template<typename T>
 int MyGERBScurve4<T>::_findIndex(T t) const
 {

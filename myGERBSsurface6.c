@@ -39,7 +39,9 @@ GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
     _sv = s->getParStartV();
     _ev = s->getParEndV();
 
+    // Check if original surface closed or not
     if (s->isClosedU()){
+        // If the surface is closed in any direction, add additional knot in that direction
         _isclosedU = true;
         n1++;
     }
@@ -48,6 +50,7 @@ GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
     }
 
     if (s->isClosedV()){
+        // If the surface is closed in any direction, add additional knot in that direction
         _isclosedV = true;
         n2++;
     }
@@ -55,10 +58,15 @@ GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
         _isclosedV = false;
     }
 
+    // Knotvector for U
     _makeKnotVectors(_u,n1,_su,_eu,_isclosedU);
+    // Knotvector for V
     _makeKnotVectors(_v,n2,_sv,_ev,_isclosedV);
 
+    // Number of subsurfaces
     _S.setDim(n1,n2);
+
+    // Create subsurfaces
     _createLocalSurfaces(s,n1,n2);
 }
 
@@ -88,50 +96,43 @@ MyGERBSsurface6<T>::~MyGERBSsurface6() {}
 template <typename T>
 void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) const {
 
-    this->_p.setDim( d1 + 1,d2+1);
+    this->_p.setDim( d1 + 1, d2+1);
     int i = _findIndex(u,_u);
     int j = _findIndex(v,_v);
 
-    GMlib::DMatrix<T> Bu(2,2);
-    GMlib::DMatrix<T> Bv(2,2);
+    GMlib::DMatrix<T> Bu(2,2); // Matrix of basis functions for U
+    GMlib::DMatrix<T> Bv(2,2); // Matrix of basis functions for V
 
-    Bu[0][1] = _B(_W(i,1,u,_u));
-    Bu[0][0] = 1 - Bu[0][1];
+    Bu[0][1] = _B(_W(i,1,u,_u)); // basis function U
+    Bu[0][0] = 1 - Bu[0][1]; // basis function U
 
-    Bv[1][0] = _B(_W(j,1,v,_v));
-    Bv[0][0] = 1 - Bv[1][0];
+    Bv[1][0] = _B(_W(j,1,v,_v)); //  basis function V
+    Bv[0][0] = 1 - Bv[1][0];    // basis function V
 
-    Bu[1][1] = _BDeriv(_W(i,1,u,_u));
-    Bu[1][0] = - Bu[1][1];
+    Bu[1][1] = _BDeriv(_W(i,1,u,_u)); // derivatives basis functions U
+    Bu[1][0] = - Bu[1][1]; // basis function U
 
-    Bv[1][1] = _BDeriv(_W(j,1,v,_v));
-    Bv[0][1] = - Bv[1][1];
+    Bv[1][1] = _BDeriv(_W(j,1,v,_v)); // derivatives basis functions V
+    Bv[0][1] = - Bv[1][1]; // basis function V
 
-    DMatrix< DMatrix< Vector<T,3> > >C(2,2);
-
-    DMatrix< Vector<T,3> > C1 = _S(i-1)(j-1)->evaluateParent(u,v,d1,d2);
-    DMatrix< Vector<T,3> > C2 = _S(i-1)(j)->evaluateParent(u,v,d1,d2);
-    DMatrix< Vector<T,3> > C3 = _S(i)(j-1)->evaluateParent(u,v,d1,d2);
+    DMatrix< DMatrix< Vector<T,3> > >C(2,2); // Matrix containing subsurfaces from original surface
+    DMatrix< Vector<T,3> > C1 = _S(i-1)(j-1)->evaluateParent(u,v,d1,d2); // Gives 4 additional submatrices; S00 (Position), S00V( V deriative), S00U (U Der), and S00 UV (UV Der)
+    DMatrix< Vector<T,3> > C2 = _S(i-1)(j)->evaluateParent(u,v,d1,d2); // Gives 4 additional submatrices: S01 (Position), S01V (V Der), S01U (U Der), and S01 UV (UV Der)
+    DMatrix< Vector<T,3> > C3 = _S(i)(j-1)->evaluateParent(u,v,d1,d2); // --------- ||-------------
     DMatrix< Vector<T,3> > C4 = _S(i)(j)->evaluateParent(u,v,d1,d2);
 
-    //    local curves
-    //    this->_p = Bu*(C^Bv);
+    //    local curves this->_p = Bu*(C^Bv);
     auto h1 = Bu[0][0]*C1[0][0] + Bu[0][1]*C3[0][0];
     auto h2 = Bu[0][0]*C2[0][0] + Bu[0][1]*C4[0][0];
-
     auto h3 = Bu[1][0]*C1[0][0] + Bu[1][1]*C3[0][0];
     auto h4 = Bu[1][0]*C2[0][0] + Bu[1][1]*C4[0][0];
-
     auto h5 = Bu[0][0]*C1[1][0] + Bu[0][1]*C3[1][0];
     auto h6 = Bu[0][0]*C2[1][0] + Bu[0][1]*C4[1][0];
-
     auto h7 = Bu[0][0]*C1[0][1] + Bu[0][1]*C3[0][1];
     auto h8 = Bu[0][0]*C2[0][1] + Bu[0][1]*C4[0][1];
 
     this->_p[0][0] = h1*Bv[0][0] + h2*Bv[1][0];
-
     this->_p[1][0] = h3*Bv[0][0] + h4*Bv[1][0] + h5*Bv[0][0] + h6*Bv[1][0];
-
     this->_p[0][1] = h1*Bv[0][1] + h2*Bv[1][1] + h7*Bv[0][0] + h8*Bv[1][0];
 }
 
@@ -205,15 +206,19 @@ void MyGERBSsurface6<T>::_makeKnotVectors(DVector<T>& t,int n,T start,T end, boo
 template<typename T>
 void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
 {
+
+    // If the surface is closed, we should add another knot into vector, but that complicates things when making local surfaces,
+    // so we decrease the index by 1 if any direction is closed
     int nsurf1 = n1;
     int nsurf2 = n2;
 
     if (_isclosedU)           nsurf1--;
     if (_isclosedV)           nsurf2--;
 
-    for(int i=0;i<nsurf1;i++){
+    for(int i=0;i<nsurf1;i++){  // Cycle by U direction
+        for(int j=0;j<nsurf2;j++){ // Cycle by U direction
 
-        for(int j=0;j<nsurf2;j++){
+            // Create a new Subsurface (surface, previous U, next U, current U, previous V, next V, current V)
             auto su = new PSimpleSubSurf<T>(s,_u[i],_u[i+2],_u[i+1],_v[j],_v[j+2],_v[j+1]);
             su->toggleDefaultVisualizer();
             su->replot(21,21,1,1);
@@ -223,12 +228,14 @@ void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
         }
     }
 
+    // If the surface is closed in U direction, we fold it in V direction
     if (_isclosedU){
         for(int indexU = 0;indexU<n2;indexU++){
             _S[n1-1][indexU] = _S[0][indexU];
         }
     }
 
+    // If the surface is closed V direction, we fold it in U direction
     if (_isclosedV){
         for(int indexV = 0;indexV<n1;indexV++){
             _S[indexV][n2-1] = _S[indexV][0];
@@ -236,13 +243,7 @@ void MyGERBSsurface6<T>::_createLocalSurfaces( PSurf<T, 3>* s, int n1,int n2)
     }
 }
 
-template<typename T>
-T MyGERBSsurface6<T>::_B(T t) const
-{
-    return 3*(t*t) - 2*(t*t*t);
-}
-
-
+// Check U and V
 template<typename T>
 bool MyGERBSsurface6<T>::isClosedU() const
 {
@@ -255,12 +256,18 @@ bool MyGERBSsurface6<T>::isClosedV() const
     return false;
 }
 
+
+// Blending Functions
 template<typename T>
 T MyGERBSsurface6<T>::_BDeriv(T t) const
 {
     return 6*(t) - 6*(t*t);
 }
 
-
+template<typename T>
+T MyGERBSsurface6<T>::_B(T t) const
+{
+    return 3*(t*t) - 2*(t*t*t);
+}
 
 } // END namespace GMlib

@@ -31,7 +31,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
-// c - vector control points, d - dimension, t - vector control points
+// c - vector control points, d - dimension
 template <typename T>
 inline
 MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
@@ -53,7 +53,7 @@ MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
 template <typename T>
 inline
 MySpline<T>::MySpline(const DVector<Vector<T,3>> &p, int d, int n) {
-
+    // 2'nd degree b-spline (always = 2)
     _d = d;
     _makeKnotVector(n);
     _createControlPoints(p,n); //surfaces
@@ -146,18 +146,24 @@ void MySpline<T>::_makeKnotVector(int n)
     //n = _C.getDim();
     _t.setDim(n+_d+1);
 
+    // 2'nd degree curve, so the first 3 knots will have the same value
     for(int i = 0; i<=_d; i++){
         _t[i] = 0;
     }
+
+    // Starts at degree + 1 (3) and fills in the middle knots until we reach the last 2 knots
     for(int i=_d+1; i<= n; i++){
         _t[i] = i-_d;
     }
+
+    // Last knots will have the same value, due to being of 2'nd order
     for(int i=n+1; i<=n+_d; i++){
         _t[i] = _t(i-1);
     }
 
 }
 
+   // Create Controllpoint set for Least Squares Method
 template<typename T>
 void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
 {
@@ -173,7 +179,9 @@ void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
     for (int i = 0;i<m;i++){
         T t = _t[0]+i*(getEndP()-getStartP())/(m-1);
 
+          // Find the index
         int j = _findIndex(t);
+
         // basis functions
         const T b1 = (1-_W(j,1,t))*(1-_W(j-1,2,t));
         const T b2 = ((1-_W(j,1,t))*_W(j-1,2,t))+(_W(j,1,t)*(1-_W(j,2,t)));
@@ -184,6 +192,8 @@ void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
         A[i][j] = b3;
     }
 
+    // Solve for A*p = c
+    // Least squares
     DMatrix<T> Atrans = A;
     Atrans.transpose();
     DMatrix<T> B = Atrans*A;

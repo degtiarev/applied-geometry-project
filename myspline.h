@@ -38,8 +38,12 @@ template <typename T>
 class MySpline : public PCurve<T,3> {
     GM_SCENEOBJECT(MySpline)
     public:
+        // First constructor: Input is points -> set them as controll points. Make knotvector
         MySpline( const DVector<Vector<T,3>> &c, int d);
+
+    // Second constructor: Input is vector for curve points and number of controll points, made with Least-Squares. Set degree/order. Make knotvector
     MySpline( const DVector<Vector<T,3>> &p, int d, int n);
+
     MySpline( const MySpline<T>& copy );
     virtual ~MySpline();
 
@@ -67,8 +71,9 @@ protected:
     int                  _d; //degree
 
 private:
-
+    // Find / calculate W
     T                   _W(int i, int d, T t) const;
+    // Find  i
     int                 _findIndex(T t) const;
     void                _makeKnotVector(int n);
     void                _createControlPoints(const DVector<Vector<T,3>> &p,int n);
