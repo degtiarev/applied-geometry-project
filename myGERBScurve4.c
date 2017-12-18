@@ -31,13 +31,13 @@ namespace GMlib {
 template<typename T>
 GMlib::MyGERBScurve4<T>::MyGERBScurve4(PCurve<T,3> *c, int n)
 {
-    _d = 1;
-    _s  = c->getParStart();
-    _e = c->getParEnd();
+    _d = 1; //degree is 1, means we have
+    _s  = c->getParStart(); //start
+    _e = c->getParEnd(); //end
 
     if (c->isClosed()){
         _isclosed = true;
-        n++;
+        n++; //number of subcurves,knots, for closed we need at least n+1 knots
     }
     else {
         _isclosed = false;
@@ -82,7 +82,8 @@ void MyGERBScurve4<T>::eval( T t, int d, bool /*l*/ ) const {
     int i = _findIndex(t);
 
     const T b1 = 1-_B(_W(i,1,t));
-    const T b2 = _B(_W(i,1,t));
+    const T b2 = _B(_W(i,1,t));  // computed equally for both cases.
+    // For closed with the same indices as for the references to the local curves
 
     //                 local curves
     this->_p = b1*_C[i-1]->evaluateParent(t,0) + b2*_C[i]->evaluateParent(t,0);
@@ -110,7 +111,7 @@ T MyGERBScurve4<T>::_W(int i, int d, T t) const
 // basis functions different from 0
 // which control points we use
 template<typename T>
-int MyGERBScurve4<T>::_findIndex(T t) const
+int MyGERBScurve4<T>::_findIndex(T t) const //find index of ti in the knot vector, which term of the sum is different from 0
 {
     int i=_d;
     int n = _C.getDim();
@@ -142,7 +143,7 @@ void MyGERBScurve4<T>::_makeKnotVector(int n)
     //std::cout << "_t = " << _t << std::endl;
 
     if (_isclosed){
-
+        // two first and two last knot intervals must be equal, it must be kept if a knot value is changed
         _t[0] = _t[1] - (_t[n] - _t[n-1]);
         _t[n+1] = _t[n] + (_t[2] - _t[1]);
     }
@@ -161,7 +162,7 @@ void MyGERBScurve4<T>::_createLocalCurves(PCurve<T,3> *c, int n){
         auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);
         cu->toggleDefaultVisualizer();
         cu->replot(21,0);
-        cu->setCollapsed(true);
+        cu->setCollapsed(true); //collapse subcurves so not to see them on the scene
         _C[i] = cu;
         this->insert(cu);
     }
