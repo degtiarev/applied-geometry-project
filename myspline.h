@@ -72,7 +72,7 @@ protected:
 
 private:
     // Find / calculate W
-    T                   _W(int i, int d, T t) const;
+    T                   _W(int i, int d, T t) const; // linear translation and scaling function
     // Find  i
     int                 _findIndex(T t) const;
     void                _makeKnotVector(int n);

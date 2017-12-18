@@ -31,7 +31,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
-// c - vector control points, d - dimension
+// c - vector control points, d - degree
 template <typename T>
 inline
 MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
@@ -39,11 +39,12 @@ MySpline<T>::MySpline(const DVector<Vector<T,3>> &c, int d) {
     _makeKnotVector(c.getDim());
     _C = c;
 
-    for (int i=0;i<_C.getDim();i++){
+    for (int i=0; i<_C.getDim(); i++){
         Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
         this->insert(s);
     }
 
+    // set visualiser for Selector
     auto sk = new SelectorGridVisualizer<T>;
     sk->setSelectors(_C,0,isClosed());
     this->insertVisualizer(sk);
@@ -56,8 +57,9 @@ MySpline<T>::MySpline(const DVector<Vector<T,3>> &p, int d, int n) {
     // 2'nd degree b-spline (always = 2)
     _d = d;
     _makeKnotVector(n);
-    _createControlPoints(p,n); //surfaces
+    _createControlPoints(p,n); //create control points and add selectors
 
+    // set visualise for Selector
     auto sk = new SelectorGridVisualizer<T>;
     sk->setSelectors(_C,0,isClosed());
     this->insertVisualizer(sk);
@@ -96,7 +98,8 @@ void MySpline<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
-    // basis functions (= order )
+
+    // basis functions (3 order )
     const T b1 = (1-_W(i,1,t))*(1-_W(i-1,2,t)); //A[i][j-2]
     const T b2 = ((1-_W(i,1,t))*_W(i-1,2,t))+(_W(i,1,t)*(1-_W(i,2,t))); //A[i][j-1]
     const T b3 = (_W(i,1,t)*_W(i,2,t)); //A[i][j]
@@ -122,7 +125,6 @@ template<typename T>
 T MySpline<T>::_W(int i, int d, T t) const
 {
     return ((t - _t(i))/(_t(i+d)-_t(i)));
-
 }
 
 template<typename T>
@@ -143,7 +145,7 @@ int MySpline<T>::_findIndex(T t) const
 template<typename T>
 void MySpline<T>::_makeKnotVector(int n)
 {
-    //n = _C.getDim();
+    //n = _C.getDim(); , amount items in knot vectors
     _t.setDim(n+_d+1);
 
     // 2'nd degree curve, so the first 3 knots will have the same value
@@ -163,7 +165,7 @@ void MySpline<T>::_makeKnotVector(int n)
 
 }
 
-   // Create Controllpoint set for Least Squares Method
+// Create Controllpoint set for Least Squares Method
 template<typename T>
 void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
 {
@@ -179,7 +181,7 @@ void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
     for (int i = 0;i<m;i++){
         T t = _t[0]+i*(getEndP()-getStartP())/(m-1);
 
-          // Find the index
+        // Find the index
         int j = _findIndex(t);
 
         // basis functions
@@ -196,10 +198,12 @@ void MySpline<T>::_createControlPoints(const DVector<Vector<T, 3> > &p, int n)
     // Least squares
     DMatrix<T> Atrans = A;
     Atrans.transpose();
-    DMatrix<T> B = Atrans*A;
+    DMatrix<T> B = Atrans * A;
     B.invert();
-    DVector<Vector<T,3>> x = Atrans*p;
+    DVector<Vector<T,3>> x = Atrans * p;
     _C = B*x;
+
+    // create selectors
     for(int i=0; i<_C.getDim(); i++){
         Selector<T,3>* s = new Selector<T,3>(_C[i],i,this);
         this->insert(s);

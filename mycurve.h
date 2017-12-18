@@ -59,7 +59,7 @@ protected:
     T                   getEndP()   const override;
 
 
-    // Protected data for the curve
+    // Radius
     T               _r;
 
 }; // END class PCircle

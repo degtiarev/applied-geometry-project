@@ -84,39 +84,23 @@ void MyCurve<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
 
-    const T ct = _r * cos(t);
-    const T st = _r * sin(t);
-
+    // p - vector that uses repot to replot the curves
     this->_p[0][0] = t * cos(t);
     this->_p[0][1] = t * sin(t);
     this->_p[0][2] = t;
 
-    if( this->_dm == GM_DERIVATION_EXPLICIT ) {
-
-        if( d > 0 ) {
-            this->_p[1][0] = -st;
-            this->_p[1][1] =  ct;
-            this->_p[1][2] =  T(0);
-        }
-        if( d > 1 ) this->_p[2] = -this->_p[0];
-        if( d > 2 ) this->_p[3] = -this->_p[1];
-        if( d > 3 ) this->_p[4] = this->_p[0];
-        if( d > 4 ) this->_p[5] = this->_p[1];
-        if( d > 5 ) this->_p[6] = this->_p[2];
-        if( d > 6 ) this->_p[7] = this->_p[3];
-    }
 }
 
 
 template <typename T>
 T MyCurve<T>::getStartP() const {
-    return T(0);
+    return T(0); //domain start
 }
 
 
 template <typename T>
 T MyCurve<T>::getEndP()const {
-    return T( M_2PI );
+    return T( M_2PI ); //domain end
 }
 
 

@@ -45,12 +45,12 @@ protected:
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
-    T                    _x;
-    PCurve<T,3> *        _C1;
-    PCurve<T,3> *        _C2;
+    T                    _x; // percentage
+    PCurve<T,3> *        _C1; // curve 1
+    PCurve<T,3> *        _C2; // curve 2
 
 private:
-    T                   _W(int i, int d, T t) const;
+    T                   _W(int i, int d, T t) const; //  the linear translation and scaling function
     T                   _B(T t) const;
     int                 _findIndex(T t) const;
     void                _makeKnotVector(int n);

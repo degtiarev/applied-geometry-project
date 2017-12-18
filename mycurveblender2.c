@@ -31,6 +31,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 
+// x - percentage
 template<typename T>
 MyCurveBlender2<T>::MyCurveBlender2( PCurve<T,3> *c1,  PCurve<T,3> *c2, T x)
 {
@@ -69,15 +70,14 @@ void MyCurveBlender2<T>::eval( T t, int d, bool /*l*/ ) const {
 
     this->_p.setDim( d + 1 );
     if (t < _C1->getParEnd() - _x*_C1->getParDelta()){ // from start1 to end-percentage for blending
-        this->_p = _C1->evaluateParent(t,0); //evaluate first part
+        this->_p = _C1->evaluateParent(t,0); //evaluate first part c1 -1 curve
     }
     else if (t < _C1->getParEnd()){ //blending interval
-        T _t1 = (t-_C1->getParEnd()+_x*_C1->getParDelta())/(_x*_C1->getParDelta()); //(t - end of c1 + blended interval)/blended interval
+        T _t1 = (t-_C1->getParEnd()+_x*_C1->getParDelta())/(_x*_C1->getParDelta()); //(t - end of c1 + blended interval) / blended interval ===end of 1 curve
 
         const T b1 = 1-_B(_t1);
-        const T b2 = _B(_t1); //blending
-
-        this->_p = b1*_C1->evaluateParent(t,0) + b2*_C2->evaluateParent(_C2->getParStart()+_t1*_x*_C2->getParDelta(),0);//_C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
+        const T b2 = _B(_t1);
+        this->_p = b1*_C1->evaluateParent(t,0)  +    b2*_C2->evaluateParent(_C2->getParStart()  +   _t1*_x*_C2->getParDelta(),0); //_C[i-2]*b1 + _C[i-1]*b2 + _C[i]*b3;
     }
     else
         this->_p = _C2->evaluateParent(_C2->getParStart()+t-_C1->getParEnd()+_x*_C2->getParDelta(),0); //evaluate the part from the second curve

@@ -31,6 +31,7 @@ namespace GMlib {
 // Constructors and destructor           **
 //*****************************************
 template<typename T>
+// n1 & n2 -amount of items in knot vectors
 GMlib::MyGERBSsurface6<T>::MyGERBSsurface6(PSurf<T,3> *s, int n1, int n2)
 {
     _d = 1;
@@ -121,7 +122,7 @@ void MyGERBSsurface6<T>::eval( T u, T v, int d1, int d2, bool lu, bool lv ) cons
     DMatrix< Vector<T,3> > C3 = _S(i)(j-1)->evaluateParent(u,v,d1,d2); // --------- ||-------------
     DMatrix< Vector<T,3> > C4 = _S(i)(j)->evaluateParent(u,v,d1,d2);
 
-    //    local curves this->_p = Bu*(C^Bv);
+    //    local curves this->_p = Bu*(C^Bv), where * is dot product & ^ is
     auto h1 = Bu[0][0]*C1[0][0] + Bu[0][1]*C3[0][0];
     auto h2 = Bu[0][0]*C2[0][0] + Bu[0][1]*C4[0][0];
     auto h3 = Bu[1][0]*C1[0][0] + Bu[1][1]*C3[0][0];
@@ -161,7 +162,7 @@ T MyGERBSsurface6<T>::getEndPV()const {
 
 
 template<typename T>
-T MyGERBSsurface6<T>::_W(int i, int d, T t,const DVector<T>& knot) const
+T MyGERBSsurface6<T>::_W(int i, int d, T t,const DVector<T>& knot) const // the linear translation and scaling function
 {
     return ((t - knot(i))/(knot(i+d)-knot(i)));
 }
@@ -258,12 +259,14 @@ bool MyGERBSsurface6<T>::isClosedV() const
 
 
 // Blending Functions
+// derivative of basis function
 template<typename T>
 T MyGERBSsurface6<T>::_BDeriv(T t) const
 {
     return 6*(t) - 6*(t*t);
 }
 
+// basis function
 template<typename T>
 T MyGERBSsurface6<T>::_B(T t) const
 {

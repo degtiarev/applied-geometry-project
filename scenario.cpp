@@ -80,9 +80,9 @@ void Scenario::initializeScenario() {
     // scene()->insert(surface);
 
     // My curve
-    auto mycurve = new GMlib::MyCurve<float>();
-    mycurve->toggleDefaultVisualizer();
-    mycurve->replot(200,0);
+    //    auto mycurve = new GMlib::MyCurve<float>();
+    //    mycurve->toggleDefaultVisualizer();
+    //    mycurve->replot(200,0);
     //    mycurve->translate(GMlib::Vector<float,3>(0,13,0));
     //    scene()->insert(mycurve);
 

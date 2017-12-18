@@ -68,20 +68,20 @@ protected:
 
     // Protected data for the curve
 
-    DMatrix<PSurf<T,3>*> _S; //local curves
-    DVector<T>           _u; //knot vector
-    DVector<T>           _v; //knot vector
-    int                  _d; //degree
-    T                    _su;
-    T                    _eu;
-    T                    _sv;
-    T                    _ev;
+    DMatrix<PSurf<T,3>*> _S;  //local curves
+    DVector<T>           _u;  //knot vector
+    DVector<T>           _v;  //knot vector
+    int                  _d;  //degree
+    T                    _su; // start U
+    T                    _eu; // end U
+    T                    _sv; // start V
+    T                    _ev; // end V
     bool                 _isclosedU;
     bool                 _isclosedV;
 private:
 
-    T                   _W(int i, int d, T t,const DVector<T>& knot) const;
-    T                   _B(T t) const;
+    T                   _W(int i, int d, T t,const DVector<T>& knot) const; // the linear translation and scaling function
+    T                   _B(T t) const; // basis function
     T                   _BDeriv(T t) const;
     int                 _findIndex(T t,const DVector<T>& knot) const;
     void                _makeKnotVectors(DVector<T>& t,int n,T start,T end,bool isclosed);

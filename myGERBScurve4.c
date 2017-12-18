@@ -28,16 +28,17 @@ namespace GMlib {
 //*****************************************
 // Constructors and destructor           **
 //*****************************************
+// c - curve, n - number of subcurves
 template<typename T>
 GMlib::MyGERBScurve4<T>::MyGERBScurve4(PCurve<T,3> *c, int n)
 {
-    _d = 1; //degree is 1, means we have
+    _d = 1; //degree is 1
     _s  = c->getParStart(); //start
     _e = c->getParEnd(); //end
 
     if (c->isClosed()){
         _isclosed = true;
-        n++; //number of subcurves,knots, for closed we need at least n+1 knots
+        n++; //number of subcurves, knots, for closed we need at least n+1 knots
     }
     else {
         _isclosed = false;
@@ -75,17 +76,18 @@ bool MyGERBScurve4<T>::isClosed() const {
 // Overrided (protected) virtual functons from PCurve **
 //******************************************************
 
+// computed equally for both cases (close and open)
 template <typename T>
 void MyGERBScurve4<T>::eval( T t, int d, bool /*l*/ ) const {
 
+    // _p - dvector[dvector] for repot (contains positions, derivatives)
     this->_p.setDim( d + 1 );
     int i = _findIndex(t);
 
     const T b1 = 1-_B(_W(i,1,t));
-    const T b2 = _B(_W(i,1,t));  // computed equally for both cases.
-    // For closed with the same indices as for the references to the local curves
+    const T b2 = _B(_W(i,1,t));
 
-    //                 local curves
+    // local curves c-control points i-1 - because of differnt order is 2 (ci and ci-1 we have only)
     this->_p = b1*_C[i-1]->evaluateParent(t,0) + b2*_C[i]->evaluateParent(t,0);
 }
 
@@ -101,6 +103,7 @@ T MyGERBScurve4<T>::getEndP()const {
     return _t(_C.getDim());
 }
 
+//  the linear translation and scaling function
 template<typename T> // index i from knotvector, d = order of the matrix, t from GMlib for eval
 T MyGERBScurve4<T>::_W(int i, int d, T t) const
 {
@@ -113,6 +116,7 @@ T MyGERBScurve4<T>::_W(int i, int d, T t) const
 template<typename T>
 int MyGERBScurve4<T>::_findIndex(T t) const //find index of ti in the knot vector, which term of the sum is different from 0
 {
+    // _d - degree
     int i=_d;
     int n = _C.getDim();
     for(;i<=n;i++){
@@ -125,14 +129,15 @@ int MyGERBScurve4<T>::_findIndex(T t) const //find index of ti in the knot vecto
     return i;
 }
 
+// n - number of subcurves
 template<typename T>
 void MyGERBScurve4<T>::_makeKnotVector(int n)
 {
-
+    // distance between knots
     auto local_d = (_e - _s)/(n - 1);
 
     _t.setDim(n + _d+1);
-    _t[0] = _t[1] = _s;
+    _t[0] = _t[1] = _s; // _s - start
 
     for(int i = 0; i<n ;i++){
         _t[i+2] = _s+(i+1)*local_d;
@@ -140,46 +145,43 @@ void MyGERBScurve4<T>::_makeKnotVector(int n)
 
     _t[n] = _t[n+1] = _e;
 
-    //std::cout << "_t = " << _t << std::endl;
-
     if (_isclosed){
         // two first and two last knot intervals must be equal, it must be kept if a knot value is changed
         _t[0] = _t[1] - (_t[n] - _t[n-1]);
         _t[n+1] = _t[n] + (_t[2] - _t[1]);
     }
-    //std::cout << "closed _t = " << _t << std::endl;
-    //if closed t[0] = t[1] - (t[n] - t[n-1]), t[n+1] = t[n] + (t[2] - t[1])
-
 }
 
-// 5 task
+
 template<typename T>
 void MyGERBScurve4<T>::_createLocalCurves(PCurve<T,3> *c, int n){
 
-    // go trough for all local curve and rotate each subcurve
     _C.setDim(n);
     for(int i=0; i<n-1; i++){
-        auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]);
+        auto cu = new PSubCurve<T>(c,_t[i],_t[i+2],_t[i+1]); // send curve, previos, current, next
         cu->toggleDefaultVisualizer();
         cu->replot(21,0);
-        cu->setCollapsed(true); //collapse subcurves so not to see them on the scene
+        cu->setCollapsed(true); //collapse subcurves so not to see them on the scene and create cubes
         _C[i] = cu;
         this->insert(cu);
     }
-    if (_isclosed){
+
+    if (_isclosed){ //closed
         _C[n-1] = _C[0];
     }
-    else {
+
+    else { // open
         auto cu = new PSubCurve<T>(c,_t[n-1],_t[n+1],_t[n]);
         cu->toggleDefaultVisualizer();
         cu->replot(21,0);
-        cu->setCollapsed(true);
+        cu->setCollapsed(true); //collapse subcurves so not to see them on the scene and create cubes
         _C[n-1] = cu;
         this->insert(cu);
     }
 
 }
 
+// basis function
 template<typename T>
 T MyGERBScurve4<T>::_B(T t) const
 {
@@ -189,8 +191,8 @@ T MyGERBScurve4<T>::_B(T t) const
 template<typename T>
 void GMlib::MyGERBScurve4<T>::localSimulate(double dt)
 {
-    for (int i = 0;i<_C.getDim();i++){
-        _C[i]->rotate(dt,GMlib::Vector<float,3>(1,0,0));
+    for (int i = 0; i<_C.getDim(); i++){
+        _C[i]->rotate(dt,GMlib::Vector<float,3>(1,3,85));
     }
 
 }

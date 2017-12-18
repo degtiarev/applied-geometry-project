@@ -58,7 +58,7 @@ protected:
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
-    void                localSimulate(double dt) override;
+    void                localSimulate(double dt) override; // Animation
 
 
     // Protected data for the curve
@@ -66,16 +66,16 @@ protected:
     DVector<PCurve<T,3>*>_C; //local curves
     DVector<T>           _t; //knot vector
     int                  _d; //degree
-    T                    _s;
-    T                    _e;
+    T                    _s; //start
+    T                    _e; //end
     bool                 _isclosed;
 
 private:
 
-    T                   _W(int i, int d, T t) const;
-    T                   _B(T t) const;
-    int                 _findIndex(T t) const;
-    void                _makeKnotVector(int n);
+    T                   _W(int i, int d, T t) const;  // Calculate the linear translation and scaling function
+    T                   _B(T t) const; // Basis function
+    int                 _findIndex(T t) const; // Find  i (find index of ti in the knot vector, which term of the sum is different from 0)
+    void                _makeKnotVector(int n); // Form knotvector
     void                _createLocalCurves(PCurve<T,3> *c,int n);
 
 
